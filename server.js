@@ -122,4 +122,4 @@ app.post('/api/register', async (req, res, next) =>
 
 console.log('Server running');
 
-app.listen(process.env.SERVER_PORT);
+app.listen(5000);
