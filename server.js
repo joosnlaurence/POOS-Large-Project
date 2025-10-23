@@ -47,6 +47,12 @@ app.post('/api/login', async (req, res, next) =>
         // TODO: hash passwords in database
         const {ident, password} = req.body;
 
+        if(!(ident?.trim()) || !(password?.trim())){
+            ret.error = 'Missing fields';
+            res.status(400).json(ret);
+            return;
+        }
+
         const account = await db.collection('users').findOne({
             // User can login via either username or email
             $or: [
@@ -92,6 +98,12 @@ app.post('/api/register', async (req, res, next) =>
     try {
         const {firstName, lastName, user, email, password} = req.body;
         
+        if(!(firstName?.trim()) || !(user?.trim() || !(email?.trim()) || !(password?.trim()))){
+            ret.error = 'Missing fields';
+            res.status(400).json(ret);
+            return;
+        }
+
         const newAccount = await db.collection('users').insertOne({
             firstName: firstName,
             lastName: lastName,
