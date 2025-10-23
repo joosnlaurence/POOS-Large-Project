@@ -63,6 +63,7 @@ jobs:
             cd /var/mainServer
             cat > .env << EOF
             MONGO_URI=${{ secrets.MONGO_URI }}
+            SERVER_PORT=${{ secrets.SERVER_PORT }}
             EOF  
 
       - name: Install dependencies and restart server
