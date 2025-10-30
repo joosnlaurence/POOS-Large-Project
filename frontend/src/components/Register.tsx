@@ -19,7 +19,7 @@ function Register()
 
         try
         {    
-            const response = await fetch('http://localhost:5000/api/register',
+            const response = await fetch('http://4lokofridays.com/api/register',
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
