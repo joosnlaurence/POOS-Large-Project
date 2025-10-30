@@ -34,7 +34,7 @@ jobs:
         with:
             switches: -avzr --delete
             path: frontend/dist/
-            remote_path: /var/www/$${{ secrets.SERVER_HOST }}/html
+            remote_path: /var/www/${{ secrets.SERVER_HOST }}/html
             remote_host: ${{ secrets.SERVER_HOST }}
             remote_port: ${{ secrets.SERVER_PORT }}
             remote_user: ${{ secrets.SERVER_USER }}
