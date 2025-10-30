@@ -38,7 +38,6 @@ export async function setupDatabase() {
         const client = new MongoClient(mongo_uri);
         await client.connect();
         db = client.db('large-proj-data');
-        return db;
     } else {
         // Fallback in-memory store for local testing when MONGO_URI is not provided
         console.warn('MONGO_URI not set — using in-memory store (for testing only)');
@@ -68,6 +67,17 @@ export async function setupDatabase() {
                             return users.find(u => Object.keys(query).every(k => u[k] === query[k])) || null;
                         },
                         async insertOne(doc) {
+                            // 'user' and 'email' have the 'unique' property in the db, so
+                            // we need to make sure we throw an error if we try to insert duplicates
+                            const duplicateUser = users.find(u => u.user === doc.user);
+                            const duplicateEmail = users.find(u => u.email === doc.email);
+                            
+                            if (duplicateUser || duplicateEmail) {
+                                const error = new Error('Duplicate key error');
+                                error.code = 11000;
+                                throw error;
+                            }
+
                             const id = new ObjectId();
                             const toInsert = { ...doc, _id: id };
                             users.push(toInsert);
@@ -96,7 +106,13 @@ export async function setupDatabase() {
                     async insertOne() { return { insertedId: new ObjectId() }; },
                     async deleteOne() { return { deletedCount: 0 }; }
                 };
+            }, 
+            // Reset method for testing
+            reset() {
+                users.length = 0;
+                refreshTokens.length = 0;
             }
         };
     }
+    return db;
 }
