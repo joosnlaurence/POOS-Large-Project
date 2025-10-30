@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
+import * as URL from '../url.ts';
 
 function Login()
 {
@@ -17,7 +18,7 @@ function Login()
   
         try
         {    
-            const response = await fetch('http://4lokofridays.com/api/login',
+            const response = await fetch(URL.buildPath('api/users/login'),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
