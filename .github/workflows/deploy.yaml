@@ -47,7 +47,7 @@ jobs:
         with:
           # archive, verbose, compress, recursive
           # --delete is same as 'overwrite: true' for scp-action
-          switches: |
+          switches: >-
             -avzr 
             --delete  
             --exclude="node_modules/" 
