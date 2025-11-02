@@ -1,6 +1,6 @@
 // import React, { useState } from 'react';
 
-function CardUI()
+function HomeUI()
 {
     return(
         <br/>
@@ -8,4 +8,4 @@ function CardUI()
 }
 
 
-export default CardUI;
+export default HomeUI;
