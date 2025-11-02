@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 
 //HIGHLY IMPORTANT THAT THIS IS IMPORTED OR ELSE THE MAP WILL NOT RENDER
@@ -14,17 +14,23 @@ function HomeUI()
         const [position, setPosition] = useState(null)
         const map = useMapEvents({
             click() {
-            map.locate()
+                map.locate()
             },
             locationfound(e) {
-                setPosition(e.latlng)
-                map.flyTo(e.latlng, map.getZoom())
+                
+                handleSetPosition(e)
+                //map.flyTo(e.latlng, map.getZoom())
             },
         })
 
+        function handleSetPosition( e: any ) : void
+        {
+            setPosition( e.latlng );
+        }
+
         return position === null ? null : (
             <Marker position={position}>
-            <Popup>You are here</Popup>
+                <Popup>You are here</Popup>
             </Marker>
         )
     }
