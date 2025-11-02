@@ -33,7 +33,7 @@ function Login()
                 localStorage.setItem('user_data', JSON.stringify(user));
   
                 setMessage('');
-                window.location.href = '/main';
+                window.location.href = '/home';
             }
         }
         catch(error:any)
