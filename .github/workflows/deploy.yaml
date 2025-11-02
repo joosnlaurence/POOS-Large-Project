@@ -18,7 +18,7 @@ jobs:
           node-version: '22.18'
           cache: 'npm'
           cache-dependency-path: |
-            package-lock.json
+            backend/package-lock.json
             frontend/package-lock.json
 
       - name: Install frontend dependencies
@@ -30,34 +30,44 @@ jobs:
         run: npm run build
 
       - name: Deploy frontend to server
-        uses: appleboy/scp-action@v0.1.5
+        uses: Burnett01/rsync-deployments@7.0.2
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: "frontend/dist/*"
-          target: "/var/www/${{ secrets.SERVER_HOST }}/html"
-          strip_components: 2
-          rm: true
+            switches: -avzr --delete
+            path: frontend/dist/
+            remote_path: /var/www/${{ secrets.SERVER_HOST }}/html
+            remote_host: ${{ secrets.SERVER_HOST }}
+            remote_port: ${{ secrets.SERVER_PORT }}
+            remote_user: ${{ secrets.SERVER_USER }}
+            remote_key: ${{ secrets.SERVER_SSH_KEY }}
 
+      # Use rsync instead of scp so we can --exclude directories we shouldn't 
+      # deploy. That way, we don't have to manually add any new files for our server
       - name: Deploy backend files
-        uses: appleboy/scp-action@v0.1.5
+        uses: Burnett01/rsync-deployments@7.0.2
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: "server.js,package.json,package-lock.json"
-          target: "/var/mainServer"
-          overwrite: true
+          # archive, verbose, compress, recursive
+          # --delete is same as 'overwrite: true' for scp-action
+          switches: >-
+            -avzr 
+            --delete  
+            --exclude="node_modules/" 
+            --exclude="__tests__/"
+            --exclude="coverage/"
+            --exclude=".env"
+            --exclude="jest.config.js"
+          path: backend/
+          remote_path: /var/mainServer/
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_port: ${{ secrets.SERVER_PORT }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
 
       - name: Create .env file on server
         uses: appleboy/ssh-action@v1.0.0
         with: 
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd /var/mainServer
@@ -70,12 +80,12 @@ jobs:
         with: 
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd /var/mainServer
             npm ci --production
             npm list -g pm2 || npm install -g pm2
-            pm2 reload main-express-server --update-env || pm2 start server.js --name "main-express-server"
+            pm2 reload main-express-server --update-env || pm2 start index.js --name "main-express-server"
             pm2 save
-            nginx -s reload
+            sudo nginx -s reload

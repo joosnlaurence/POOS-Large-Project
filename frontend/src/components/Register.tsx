@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Register.css";
+import * as URL from '../url.ts';
 
 function Register()
 {
@@ -19,7 +20,7 @@ function Register()
 
         try
         {    
-            const response = await fetch('http://4lokofridays.com/api/register',
+            const response = await fetch(URL.buildPath('api/users/register'),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
