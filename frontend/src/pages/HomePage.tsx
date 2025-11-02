@@ -1,14 +1,14 @@
 import LoggedInName from '../components/LoggedInName';
-import MainUI from '../components/MainUI';
+import HomeUI from '../components/HomeUI';
 
-const MainPage = () =>
+const HomePage = () =>
 {
     return(
         <div>
             <LoggedInName />
-            <MainUI />
+            <HomeUI />
         </div>
     );
 }
 
-export default MainPage;
+export default HomePage;
