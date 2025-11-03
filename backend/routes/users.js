@@ -130,6 +130,39 @@ export function createUsersRouter(db) {
                 password: hashed
             });
 
+            // Change made for email verificaion
+            try {
+                const { code, hash } = newOneTimeCode();
+                const verifyExpires  = expiresInSeconds(60);
+                const allowResendAt  = verifyExpires;
+
+                await db.collection('users').updateOne(
+                    { _id: newAccount.insertedId },
+                    {
+                      $set: {
+                        isVerified: false,
+                        verifyCodeHash: hash,
+                        verifyCodeExpires: verifyExpires,
+                        verifyCodeExpires: allowResendAt
+                    }
+                  }
+                );
+                 
+                await sendMail({
+                  to: (email || '').toLowerCase(),
+                  subject: 'Your verification code',
+                  html: `
+                    <p>Your verification code (valid for 60 seconds):</p>
+                    <p style="font-size:22px; letter-spacing:4px;"><b>${code}</b></p>
+                    <p>If it expires, click "Resend code" to get a new one.</p>
+                  `
+                });
+
+                  // console.log('DEV verify code:', code);
+            } catch (mailErr) {
+                console.error('Post-register verification mail error:', mailErr?.message || mailErr);
+            }
+                    
             ret._id = newAccount.insertedId;
             ret.success = true;
             res.status(201).json(ret);
