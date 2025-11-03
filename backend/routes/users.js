@@ -68,6 +68,11 @@ export function createUsersRouter(db) {
                 return;
             }
 
+            if (!account.isVerified) {
+                ret.error = 'Email not verified';
+                return res.status(403).json(ret);
+            }
+
             // generate tokens
             const accessToken = generateAccessToken(account);
             const refreshToken = generateRefreshToken(account);
