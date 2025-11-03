@@ -25,8 +25,10 @@ import { sendMail } from '../utils/mailer.js';
  * POST /register, 
  * POST /refresh,
  * POST /logout,
- * POST /verify-email-code, and
- * POST /request-verification
+ * POST /verify-email-code,
+ * POST /request-verification,
+ * POST /request-password-reset, and
+ * POST /verify-password-reset
  * endpoints
  * @param {*} db The MongoDB database to use (use either test or real db)
  * @returns A mini-app that contains the endpoints.
@@ -291,6 +293,110 @@ router.post('/request-verification', async (req, res) => {
     return res.status(500).json({ error: e.toString() });
   }
 });
+
+// Request Password Reset
+router.post('/request-password-reset', async (req, res) => {
+  try {
+    const email = (req.body.email || '').toLowerCase();
+    if (!email) return res.status(200).json({ error: '' }); // generic
+
+    const account = await db.collection('users').findOne({ email });
+    if (!account) {
+      // Always respond success (don’t reveal account existence)
+      return res.status(200).json({ error: '' });
+    }
+
+    // Simple resend throttle: 60s
+    const now = new Date();
+    if (account.resetAllowResendAt && account.resetAllowResendAt > now) {
+      const secondsLeft = Math.ceil((account.resetAllowResendAt - now) / 1000);
+      return res
+        .status(200)
+        .json({ error: `Please wait ${secondsLeft}s before requesting a new code` });
+    }
+
+    // Generate a 6-digit code; valid for 10 minutes
+    const { code, hash } = newOneTimeCode();
+    const resetExpires = expiresInSeconds(10 * 60); // 10 min
+    const allowResendAt = new Date(Date.now() + 60 * 1000); // 60s
+
+    await db.collection('users').updateOne(
+      { _id: account._id },
+      {
+        $set: {
+          resetCodeHash: hash,
+          resetCodeExpires: resetExpires,
+          resetAllowResendAt: allowResendAt
+        }
+      }
+    );
+
+    await sendMail({
+      to: email,
+      subject: 'Your password reset code',
+      html: `
+        <p>Use this code to reset your password (valid for 10 minutes):</p>
+        <p style="font-size:22px; letter-spacing:4px;"><b>${code}</b></p>
+        <p>If it expires, click "Resend code" and try again.</p>
+      `
+    });
+
+    return res.status(200).json({ error: '' });
+  } catch (e) {
+    console.error('request-password-reset error:', e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Verify Reset Code & Set New Password
+router.post('/verify-password-reset', async (req, res) => {
+  try {
+    const email = (req.body.email || '').toLowerCase();
+    const code = (req.body.code || '').trim();
+    const newPassword = (req.body.newPassword || '').trim();
+
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({ error: 'Missing email, code, or newPassword' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+
+    const cHash = hashOneTimeToken(code);
+
+    // Find valid reset request
+    const account = await db.collection('users').findOne({
+      email,
+      resetCodeHash: cHash,
+      resetCodeExpires: { $gt: new Date() }
+    });
+
+    if (!account) {
+      return res.status(400).json({ error: 'Invalid or expired code' });
+    }
+
+    // Hash and save the new password
+    const saltRounds = 10;
+    const hashed = await bcrypt.hash(newPassword, saltRounds);
+
+    await db.collection('users').updateOne(
+      { _id: account._id },
+      {
+        $set: { password: hashed },
+        $unset: {
+          resetCodeHash: '',
+          resetCodeExpires: '',
+          resetAllowResendAt: ''
+        }
+      }
+    );
+
+    return res.status(200).json({ error: '' });
+  } catch (e) {
+    console.error('verify-password-reset error:', e);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});    
 
 return router;
 }
