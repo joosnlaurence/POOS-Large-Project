@@ -1,12 +1,11 @@
-import crypto from 'crypto';
-
-// makes a random token + its SHA256 hash
-export function newOneTimeToken() {
-  const token = crypto.randomBytes(32).toString('hex');
-  const hash  = crypto.createHash('sha256').update(token).digest('hex');
-  return { token, hash };
+export function newOneTimeCode() {
+  // 6-digit numeric code as a string
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const hash = hashOneTimeToken(code);
+  return { code, hash };
 }
 
-export function hashOneTimeToken(token) {
-  return crypto.createHash('sha256').update(token).digest('hex');
+// 60-second expiry window
+export function expiresInSeconds(sec = 60) {
+  return new Date(Date.now() + sec * 1000);
 }
