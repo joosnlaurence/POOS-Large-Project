@@ -143,7 +143,7 @@ export function createUsersRouter(db) {
                         isVerified: false,
                         verifyCodeHash: hash,
                         verifyCodeExpires: verifyExpires,
-                        verifyCodeExpires: allowResendAt
+                        verifyAllowResendAt: allowResendAt
                     }
                   }
                 );
