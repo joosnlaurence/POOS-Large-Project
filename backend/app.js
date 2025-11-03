@@ -8,6 +8,7 @@ import { MongoClient, ObjectId } from 'mongodb';
 import { verifyToken } from './middleware/auth.js';
 import { createUsersRouter } from './routes/users.js';
 import { createBuildingsRouter } from './routes/buildings.js';
+import { createFountainsRouter } from './routes/fountains.js';
 
 export function createApp(db) {
     const app = express();
@@ -24,6 +25,9 @@ export function createApp(db) {
 
     // Give the express app access to the API endpoints found in ./router/buildings
     app.use('/api/buildings', createBuildingsRouter(db));
+
+    // Give the express app access to the API endpoints found in ./router/fountains
+    app.use('/api/fountains', createFountainsRouter(db));
 
     // Protected test route
     app.get('/api/protected', verifyToken, (req, res) => {
