@@ -14,6 +14,10 @@ import {
     REFRESH_TOKEN_DAYS
 } from '../utils/tokens.js';
 
+// Import utility for email verification and password reset
+import { newOneTimeCode, hashOneTimeToken, expiresInSeconds } from '../utils/linkTokens.js';
+import { sendMail } from '../utils/mailer.js';
+
 /**
  * Modularizes the API endpoints related to user accounts for ease of use in production and testing.
  * Contains the 
