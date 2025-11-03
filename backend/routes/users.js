@@ -23,8 +23,10 @@ import { sendMail } from '../utils/mailer.js';
  * Contains the 
  * POST /login, 
  * POST /register, 
- * POST /refresh, and 
- * POST /logout 
+ * POST /refresh,
+ * POST /logout,
+ * POST /verify-email-code, and
+ * POST /request-verification
  * endpoints
  * @param {*} db The MongoDB database to use (use either test or real db)
  * @returns A mini-app that contains the endpoints.
@@ -215,6 +217,80 @@ export function createUsersRouter(db) {
         res.sendStatus(204);
     });
 
-    return router;
-}
+    // Verify Email Code
+router.post('/verify-email-code', async (req, res) => {
+  try {
+    const email = (req.body.email || '').toLowerCase();
+    const code  = (req.body.code || '').trim();
+    if (!email || !code) return res.status(400).json({ error: 'Missing email or code' });
 
+    const cHash = hashOneTimeToken(code);
+
+    const account = await db.collection('users').findOne({
+      email,
+      verifyCodeHash: cHash,
+      verifyCodeExpires: { $gt: new Date() }
+    });
+    if (!account) return res.status(400).json({ error: 'Invalid or expired code' });
+
+    await db.collection('users').updateOne(
+      { _id: account._id },
+      { 
+        $set: { isVerified: true },
+        $unset: { verifyCodeHash: '', verifyCodeExpires: '', verifyAllowResendAt: '' }
+      }
+    );
+
+    return res.json({ error: '' });
+  } catch (e) {
+    return res.status(500).json({ error: e.toString() });
+  }
+});
+
+// Request Verification
+router.post('/request-verification', async (req, res) => {
+  try {
+    const email = (req.body.email || '').toLowerCase();
+    if (!email) return res.json({ error: '' });
+
+    const account = await db.collection('users').findOne({ email });
+    if (!account || account.isVerified) return res.json({ error: '' });
+
+    const now = new Date();
+    if (account.verifyAllowResendAt && account.verifyAllowResendAt > now) {
+      const secondsLeft = Math.ceil((account.verifyAllowResendAt - now) / 1000);
+      return res.status(200).json({ error: `Please wait ${secondsLeft}s before requesting a new code` });
+    }
+
+    const { code, hash } = newOneTimeCode();
+    const verifyExpires = expiresInSeconds(60);
+    const allowResendAt = verifyExpires;
+
+    await db.collection('users').updateOne(
+      { _id: account._id },
+      {
+        $set: {
+          verifyCodeHash: hash,
+          verifyCodeExpires: verifyExpires,
+          verifyAllowResendAt: allowResendAt
+        }
+      }
+    );
+
+    await sendMail({
+      to: email,
+      subject: 'Your new verification code',
+      html: `
+        <p>Your new verification code (valid for 60 seconds):</p>
+        <p style="font-size:22px; letter-spacing:4px;"><b>${code}</b></p>
+      `
+    });
+
+    return res.json({ error: '' });
+  } catch (e) {
+    return res.status(500).json({ error: e.toString() });
+  }
+});
+
+return router;
+}
