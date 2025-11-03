@@ -1,9 +1,6 @@
 import { useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 
-//HIGHLY IMPORTANT THAT THIS IS IMPORTED OR ELSE THE MAP WILL NOT RENDER
-import "leaflet/dist/leaflet.css";
-
 function HomeUI()
 {
     const mapRef = useRef(null);
@@ -37,7 +34,7 @@ function HomeUI()
 
     return(
         //IMPORTANT ALSO TO SET A SIZE OF THE MAP OR ELSE IT ALSO WON'T RENDER
-        <MapContainer center={centerLocation} zoom={17} ref={mapRef} style={{height: "75vh", width: "63.5vw"}}>
+        <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{height: "75vh", width: "63.5vw"}}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
