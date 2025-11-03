@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,            // smtp.sendgrid.net or smtp.gmail.com
   port: Number(process.env.SMTP_PORT) || 587,
-  secure: false,                          // true if using port 465, false for 587
+  secure: Number(process.env.SMTP_PORT) === 465
   auth: {
     user: process.env.SMTP_USER,          // SendGrid: "apikey" | Gmail: your full email
     pass: process.env.SMTP_PASS           // SendGrid: your API key | Gmail: app password
