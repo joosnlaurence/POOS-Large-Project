@@ -72,7 +72,9 @@ export function createUsersRouter(db) {
                 return;
             }
 
-            if (!account.isVerified) {
+            // Should let Legacy Users have Access
+            const isVerified = account.isVerified ?? true;
+            if (!isVerified) {
                 ret.error = 'Email not verified';
                 return res.status(403).json(ret);
             }
