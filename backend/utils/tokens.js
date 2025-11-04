@@ -8,7 +8,7 @@ const REFRESH_TOKEN_DAYS = parseInt(process.env.REFRESH_TOKEN_DAYS || '7', 10);
 
 export function generateAccessToken(user) {
     return jwt.sign(
-        { id: String(user._id), user: user.user }, 
+        { userId: String(user._id), user: user.user }, 
         ACCESS_TOKEN_SECRET, 
         { expiresIn: ACCESS_TOKEN_TTL }
     );
@@ -16,7 +16,7 @@ export function generateAccessToken(user) {
 
 export function generateRefreshToken(user) {
     return jwt.sign(
-        { id: String(user._id) }, 
+        { userId: String(user._id) }, 
         REFRESH_TOKEN_SECRET, 
         { expiresIn: `${REFRESH_TOKEN_DAYS}d` }
     );

@@ -5,8 +5,10 @@ import cors from 'cors';
 
 import cookieParser from 'cookie-parser';
 import { MongoClient, ObjectId } from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { verifyToken } from './middleware/auth.js';
 import { createUsersRouter } from './routes/users.js';
+import { createVotesRouter } from './routes/votes.js';
 
 export function createApp(db) {
     const app = express();
@@ -20,6 +22,8 @@ export function createApp(db) {
 
     // Give the express app access to the API endpoints found in ./router/users
     app.use('/api/users', createUsersRouter(db));
+    // Give app access to endpoints related to the voting system
+    app.use('/api/votes', createVotesRouter(db));
 
     // Protected test route
     app.get('/api/protected', verifyToken, (req, res) => {
@@ -30,15 +34,41 @@ export function createApp(db) {
 }
 
 export async function setupDatabase() {
-    const mongo_uri = process.env.MONGO_URI;
+    let mongo_uri;
 
+    if(process.env.CI === true) {
+        mongo_uri = 'mongodb://localhost:27017';
+    }
+    else if(process.env.NODE_ENV === 'production'){
+        mongo_uri = process.env.MONGO_URI;
+    }
+    
     let db;
     if (mongo_uri) {
         console.log("MONGO_URI found, connecting to database");
         const client = new MongoClient(mongo_uri);
         await client.connect();
         db = client.db('large-proj-data');
-    } else {
+
+        // Initialize indexes if we're using the test database through GitHub Actions
+        await db.collection('votes').createIndex(
+            { timestamp: 1 },
+            { expireAfterSeconds: 7 * 24 * 60 * 60 }
+        );
+        await db.collection('votes').createIndex(
+            { userId: 1, fountainId: 1, timestamp: -1 }
+        );        
+
+        await db.collection('users').createIndex(
+            { email: 1 },
+            { unique: true }
+        );
+        await db.collection('users').createIndex(
+            { user: 1 },
+            { unique: true }
+        );
+    } 
+    else {
         // Fallback in-memory store for local testing when MONGO_URI is not provided
         console.warn('MONGO_URI not set — using in-memory store (for testing only)');
         const users = [];

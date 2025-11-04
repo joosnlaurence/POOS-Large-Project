@@ -89,7 +89,6 @@ export function createUsersRouter(db) {
         }
         catch(err) {
             console.error('Error in /api/users/login:', err.message);
-            ret.success = false;
             ret.error = 'Database error occurred';
             res.status(500).json(ret);
         }

@@ -1,14 +1,34 @@
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_SECRET } from '../utils/tokens.js';
+import 'dotenv/config';
+import { 
+    generateAccessToken,
+    ACCESS_TOKEN_SECRET 
+} from '../utils/tokens.js';
 
 export function verifyToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    let token;
+    if (process.env.NODE_ENV === 'development') {
+        const devUser = {
+            _id: '507f1f77bcf86cd799439011',
+            firstName: 'dev',
+            lastName: 'dev',
+            user: 'devuser',
+            email: 'd@user.com',
+            password: '$2b$10$ywxzcjOK54Rae1YkUCyyPuHrK.yo6nToPZpkYjBjnDGDxObVKWwFO'
+        };
+        token = generateAccessToken(devUser);
+        // console.log("dev access token: " + token);
+    }
+    else{
+        // Takes on "Bearer <access_token>"
+        const authHeader = req.headers['authorization'];
+        token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.sendStatus(401);
+        if (!token) return res.status(401).json({success: false, error: 'No token provided'});
+    }
     
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, payload) => {
-        if (err) return res.sendStatus(403);
+        if (err) return res.status(403).json({success: false, error: 'Invalid token'});
         req.user = payload;
         next();
     });

@@ -6,7 +6,8 @@
     "type": "module",
     "scripts": {
         "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
-        "start": "nodemon index.js"
+        "start": "NODE_ENV=\"production\" nodemon index.js",
+        "dev": "NODE_ENV=development nodemon index.js"
     },
     "author": "",
     "license": "ISC",
