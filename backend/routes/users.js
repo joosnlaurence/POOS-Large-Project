@@ -191,7 +191,7 @@ export function createUsersRouter(db) {
         if(token) await removeRefreshToken(db, token);
         res.clearCookie('jid');
         res.sendStatus(204);
-    });
+    });    
 
 return router;
 }
