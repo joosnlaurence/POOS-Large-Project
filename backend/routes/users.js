@@ -127,7 +127,7 @@ export function createUsersRouter(db) {
                 user: user,
                 email: email,
                 password: hashed,
-                isVeified: false
+                isVerified: false
             });
 
             try {
