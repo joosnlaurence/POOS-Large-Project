@@ -19,7 +19,7 @@ function Login()
         try
         {    
             const response = await fetch(URL.buildPath('api/users/login'),
-                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+                {method:'POST',credentials: "include",body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
   

@@ -22,7 +22,7 @@ import { sendMail } from '../utils/mailer.js';
  * Contains the 
  * POST /login, 
  * POST /register, 
- * POST /refresh,
+ * POST /refresh, and
  * POST /logout,
  * endpoints
  * @param {*} db The MongoDB database to use (use either test or real db)
@@ -143,7 +143,7 @@ export function createUsersRouter(db) {
                 `
               });
             } catch (mailErr) {
-                console.error('Post-register verification mail error:', mailErr?.message || mailErr);
+              console.warn('Register: email send failed:', mailErr?.message || mailErr);
             }
                     
             ret._id = newAccount.insertedId;
