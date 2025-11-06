@@ -4,6 +4,13 @@
    use this later, but for now I want to test the mock database. */
 // import { MongoMemoryServer } from 'mongodb-memory-server';
 
+import { jest } from '@jest/globals';
+
+// Mock the mailer BEFORE importing app code 
+await jest.unstable_mockModule('../../utils/mailer.js', () => ({
+  sendMail: jest.fn().mockResolvedValue({ messageId: 'test-message-id' })
+}));
+
 // We use supertest so we don't need to start up the server for testing
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
