@@ -108,59 +108,62 @@ export function createUsersRouter(db) {
         }
     });
     
-      router.post('/register', async (req, res, next) => {
-      // expects: { firstName, lastName, user, email, password }
-      // returns: { _id, success, error }
+    router.post('/register', async (req, res) => {
       const ret = { _id: -1, success: false, error: '' };
 
       try {
-        const { firstName, lastName, user, email, password } = req.body;
-
+        const { firstName, lastName = '', user, email, password } = req.body || {};
         if (!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())) {
-          ret.error = 'Missing fields';
-          res.status(400).json(ret);
-          return; 
+          return res.status(400).json({ ...ret, error: 'Missing fields' });
         }
 
-        // hash the password before storing
-        const saltRounds = 10;
-        const hashed = await bcrypt.hash(password, saltRounds);
+        const uname = user.trim();
+        const mail = email.trim().toLowerCase();
 
-        const newAccount = await db.collection('users').insertOne({
-            firstName: firstName,
-            lastName: lastName,
-            user: user,
-            email: email,
-            password: hashed,
-            isVerified: false
+        const existing = await db.collection('users').findOne({ 
+          $or: [{ user: uname }, { email: mail }] 
+        });
+        if (existing) {
+          const which = existing.user === uname ? 'Username' : 'Email';
+          return res.status(409).json({ ...ret, error: `${which} already in use` });
+        }
+
+        const hashed = await bcrypt.hash(password, 10);
+
+        const ins = await db.collection('users').insertOne({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          user: uname,
+          email: mail,
+          password: hashed,
+          isVerified: false,
+          createdAt: new Date()
         });
 
-        // build verification link
+        res.status(201).json({ _id: ins.insertedId, success: true, error: '' });
+
         const verifyToken = jwt.sign(
-          { id: newAccount.insertedId.toString(), email },
+          { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
           process.env.JWT_EMAIL_SECRET || 'temp_secret',
           { expiresIn: '1h' }
         );
-        const verifyUrl = `http://4lokofridays.com/home?token=${encodeURIComponent(verifyToken)}`;
-
-        ret._id = newAccount.insertedId;
-        ret.success = true;
-        res.status(201).json(ret);
+        const verifyUrl = `https://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
 
         sendMail({
-          to: email,
+          to: mail,
           subject: 'Verify your email',
           html: `
-            <p>Hi ${firstName},</p>
-            <p>Click below to verify your email:</p>
-            <a href="${verifyUrl}">${verifyUrl}</a>
-            <p>(This link expires in 1 hour)</p>
+            <p>Hi ${firstName.trim()},</p>
+            <p>Click below to verify your email (expires in 1 hour):</p>
+            <p><a href="${verifyUrl}">${verifyUrl}</a></p>
           `
-        })
-          .then(info => console.log('✅ Sent verification link to', email, info?.messageId || ''))
-          .catch(err => console.error('❌ Failed to send verification email:', err?.message || err));
+        }).catch(err => console.error('Verification email failed:', err?.message || err));
 
-        } catch (err) {
+      } catch (err) {
+
+        if (err?.code === 11000) {
+          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
+        }
         console.error('Register error:', err);
         return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
       }
