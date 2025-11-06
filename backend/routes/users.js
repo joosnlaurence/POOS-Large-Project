@@ -97,7 +97,7 @@ export function createUsersRouter(db) {
                     maxAge: REFRESH_TOKEN_DAYS * 24 * 60 * 60 * 1000
                 });
                 // also return access token for client use (store in memory)
-                res.status(200).json({ ...ret, accessToken });
+                res.status(201).json({ ...ret, accessToken });
             }
         }
         catch(err) {
@@ -145,7 +145,7 @@ export function createUsersRouter(db) {
 
         ret._id = newAccount.insertedId;
         ret.success = true;
-        res.status(200).json(ret);
+        res.status(201).json(ret);
 
         sendMail({
           to: email,
