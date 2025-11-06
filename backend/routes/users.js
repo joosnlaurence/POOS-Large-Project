@@ -139,11 +139,10 @@ export function createUsersRouter(db) {
           isVerified: false,
         });
 
-        // 201 required by your Jest test
         res.status(201).json({ _id: ins.insertedId, success: true, error: '' });
 
         // Skip email during tests to avoid open handles/logs
-        const isRunningTests = !!process.env.JEST_WORKER_ID || process.env.CI === 'true';
+        const isRunningTests = !!process.env.JEST_WORKER_ID;
         if (!isRunningTests) {
           const verifyToken = jwt.sign(
             { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
