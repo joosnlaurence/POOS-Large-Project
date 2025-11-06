@@ -196,5 +196,43 @@ export function createUsersRouter(db) {
         res.sendStatus(204);
     });
 
+       router.get('/verify-email', async (req, res) => {
+    try {
+        const { token } = req.query;
+    
+    if (!token) {
+      return res.status(400).send('Verification token is missing');
+    }
+
+    // Verify the JWT token
+    const decoded = jwt.verify(token, process.env.JWT_EMAIL_SECRET || 'temp_secret');
+    
+    // Check if token is for email verification
+    if (decoded.aud !== 'email_verify') {
+      return res.status(400).send('Invalid token');
+    }
+
+    // Update user's isVerified status
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(decoded.id) },
+      { $set: { isVerified: true } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    // Redirect to your frontend verification success page
+    res.redirect('https://4lokofridays.com/verify/success');
+    
+  } catch (err) {
+    console.error('Email verification error:', err);
+    if (err.name === 'TokenExpiredError') {
+      return res.status(400).send('Verification link has expired');
+    }
+    res.status(500).send('Verification failed');
+  }
+});
+
 return router;
 }
