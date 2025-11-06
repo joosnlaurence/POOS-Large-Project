@@ -3,6 +3,9 @@
    integration tests since it installs all of the MongoDB functions. We might 
    use this later, but for now I want to test the mock database. */
 // import { MongoMemoryServer } from 'mongodb-memory-server';
+jest.mock('../../utils/mailer.js', () => ({
+  sendMail: jest.fn().mockResolvedValue({ messageId: 'test-message-id' })
+}));
 
 // We use supertest so we don't need to start up the server for testing
 import request from 'supertest';
