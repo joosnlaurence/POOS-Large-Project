@@ -149,7 +149,7 @@ export function createUsersRouter(db) {
             process.env.JWT_EMAIL_SECRET || 'temp_secret',
             { expiresIn: '1h' }
           );
-          const verifyUrl = `https://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
+          const verifyUrl = `http://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
 
           sendMail({
             to: mail,
@@ -223,7 +223,7 @@ export function createUsersRouter(db) {
     }
 
     // Redirect to your frontend verification success page
-    res.redirect('https://4lokofridays.com/verify/success');
+    res.redirect('http://4lokofridays.com/verify/success');
     
   } catch (err) {
     console.error('Email verification error:', err);
@@ -234,5 +234,98 @@ export function createUsersRouter(db) {
   }
 });
 
+// New for Password Reset
+
+// Request password reset - sends email with reset link
+router.post('/request-password-reset', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email?.trim()) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    const mail = email.trim().toLowerCase();
+    
+    // Find user by email
+    const user = await db.collection('users').findOne({ email: mail });
+    
+    // Don't reveal if user exists or not 
+    if (!user) {
+      return res.status(200).json({ success: true, message: 'If account exists, reset email sent' });
+    }
+
+    // Skip email during tests
+    const isRunningTests = !!process.env.JEST_WORKER_ID;
+    if (!isRunningTests) {
+      // Create reset token (expires in 1 hour)
+      const resetToken = jwt.sign(
+        { id: user._id.toString(), email: mail, aud: 'password_reset' },
+        process.env.JWT_EMAIL_SECRET || 'temp_secret',
+        { expiresIn: '1h' }
+      );
+
+      const resetUrl = `http://4lokofridays.com/change-password?token=${encodeURIComponent(resetToken)}`;
+
+      await sendMail({
+        to: mail,
+        subject: 'Reset your password',
+        html: `
+          <p>Hi ${user.firstName},</p>
+          <p>Click below to reset your password (expires in 1 hour):</p>
+          <p><a href="${resetUrl}">${resetUrl}</a></p>
+          <p>If you didn't request this, please ignore this email.</p>
+        `
+      }).catch(err => console.error('Password reset email failed:', err?.message || err));
+    }
+
+    res.status(200).json({ success: true, message: 'If account exists, reset email sent' });
+    
+  } catch (err) {
+    console.error('Password reset request error:', err);
+    res.status(500).json({ success: false, error: 'Server error occurred' });
+  }
+});
+
+// Reset password with token
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    
+    if (!token || !newPassword?.trim()) {
+      return res.status(400).json({ success: false, error: 'Token and password required' });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_EMAIL_SECRET || 'temp_secret');
+    
+    if (decoded.aud !== 'password_reset') {
+      return res.status(400).json({ success: false, error: 'Invalid token' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(decoded.id) },
+      { $set: { password: hashedPassword } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Password reset successfully' });
+    
+  } catch (err) {
+    console.error('Password reset error:', err);
+    if (err.name === 'TokenExpiredError') {
+      return res.status(400).json({ success: false, error: 'Reset link has expired' });
+    }
+    res.status(400).json({ success: false, error: 'Invalid or expired token' });
+  }
+});
+    
 return router;
 }
