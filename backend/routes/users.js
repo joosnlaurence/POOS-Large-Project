@@ -149,7 +149,7 @@ export function createUsersRouter(db) {
             process.env.JWT_EMAIL_SECRET || 'temp_secret',
             { expiresIn: '1h' }
           );
-          const verifyUrl = `https://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
+          const verifyUrl = `http://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
 
           sendMail({
             to: mail,
