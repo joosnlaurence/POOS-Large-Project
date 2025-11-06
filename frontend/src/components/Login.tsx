@@ -101,21 +101,28 @@ function Login()
           </button>
 
           <div className="createAccountLink pirata-one">
-            <span>New to our crew?</span>
-            <span
-              id="createAccountPrompt"
-              onClick={() => (window.location.href = "/register")}
-            >
-              Registarr here →
+               <span>New to our crew?</span>
+               <span
+                  id="createAccountPrompt"
+                  onClick={() => (window.location.href = "/register")}
+                >
+                  Registarr here →
+                </span>
+             </div>
+
+             <div className="forgotPasswordLink pirata-one">
+                 <span>Forgot yer secret key?</span>
+                 <span
+                    id="forgotPasswordPrompt"
+                    onClick={() => (window.location.href = "/reset-password")}
+                 >
+              {" "}Reset it here →
             </span>
           </div>
         </form>
       </div>
     </div>
   );
-
-
-
 }
 
 export default Login;
