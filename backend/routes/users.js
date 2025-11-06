@@ -74,21 +74,31 @@ export function createUsersRouter(db) {
             // store refresh token server-side
             await storeRefreshToken(db, refreshToken, account._id);
 
-            // set refresh token as HttpOnly cookie
-            res.cookie('jid', refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: REFRESH_TOKEN_DAYS * 24 * 60 * 60 * 1000
-            });
+            // detect client type: header X-Client-Type or body.clientType (explicit)
+            const headerClient = (req.get('X-Client-Type') || '').toLowerCase();
+            const bodyClient = (req.body?.clientType || '').toLowerCase();
+            const isMobile = headerClient === 'mobile' || bodyClient === 'mobile';
 
             ret._id = account._id;
             ret.firstName = account.firstName;
             ret.lastName = account.lastName;
             ret.email = account.email;
             ret.success = true;
-            // also return access token for client use (store in memory)
-            res.status(200).json({ ...ret, accessToken });
+
+            if (isMobile) {
+                // Mobile clients expect both tokens in JSON (mobile will store refreshToken securely)
+                res.status(200).json({ ...ret, accessToken, refreshToken });
+            } else {
+                // Web/browser: set refresh token as HttpOnly cookie and return access token in body
+                res.cookie('jid', refreshToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: REFRESH_TOKEN_DAYS * 24 * 60 * 60 * 1000
+                });
+                // also return access token for client use (store in memory)
+                res.status(200).json({ ...ret, accessToken });
+            }
         }
         catch(err) {
             console.error('Error in /api/users/login:', err.message);
@@ -159,10 +169,9 @@ export function createUsersRouter(db) {
         return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
       }
     });
-    
-    // Refresh token endpoint
+
     router.post('/refresh', async (req, res) => {
-        const token = req.cookies?.jid;
+        const token = req.cookies?.jid || req.body?.refreshToken || req.get('x-refresh-token');
         if(!token) return res.sendStatus(401);
 
         // check if exists in DB
