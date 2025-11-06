@@ -97,7 +97,7 @@ export function createUsersRouter(db) {
                     maxAge: REFRESH_TOKEN_DAYS * 24 * 60 * 60 * 1000
                 });
                 // also return access token for client use (store in memory)
-                res.status(200).json({ ...ret, accessToken });
+                res.status(201).json({ ...ret, accessToken });
             }
         }
         catch(err) {
@@ -107,76 +107,70 @@ export function createUsersRouter(db) {
             res.status(500).json(ret);
         }
     });
+    
+    router.post('/register', async (req, res) => {
+      const ret = { _id: -1, success: false, error: '' };
 
-    router.post('/register', async (req, res, next) => {
-        // expects: {firstName, lastName, user, email, password}
-        // produces: {_id: ObjectId(...), success: True | False, error: ""}
-
-        let ret = {
-            _id: -1,
-            success: false,
-            error: ''
-        };
-
-        try {
-            const {firstName, lastName, user, email, password} = req.body;
-
-            if(!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())){
-                ret.error = 'Missing fields';
-                res.status(400).json(ret);
-                return;
-            }
-
-            // hash the password before storing
-            const saltRounds = 10;
-            const hashed = await bcrypt.hash(password, saltRounds);
-
-            const newAccount = await db.collection('users').insertOne({
-                firstName: firstName,
-                lastName: lastName,
-                user: user,
-                email: email,
-                password: hashed,
-                isVerified: false
-            });
-
-            try {
-              await sendMail({
-                to: (email || '').toLowerCase(),
-                subject: 'Welcome aboard! Verify your email',
-                html: `
-                  <p>Ahoy, ${firstName}!</p>
-                  <p>Your account has been created successfully.</p>
-                  <p>You can sign in now. We’ll enable full features once your email is verified.</p>
-                  <!-- we’ll replace this with a real link in step 2 -->
-                  <p>For now, just log in and explore the app.</p>
-                `
-              });
-            } catch (mailErr) {
-              console.warn('Register: email send failed:', mailErr?.message || mailErr);
-            }
-                    
-            ret._id = newAccount.insertedId;
-            ret.success = true;
-            res.status(201).json(ret);
+      try {
+        const { firstName, lastName = '', user, email, password } = req.body || {};
+        if (!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())) {
+          return res.status(400).json({ ...ret, error: 'Missing fields' });
         }
-        catch(err) {
-            ret.success = false;
-            // user and email have the 'unique' property in the database
-            // This error code indicates a collision when trying to insert
-            if(err?.code === 11000){
-                ret.error = 'Username/email already in use';
-                res.status(409).json(ret);
-                return;
-            }
 
-            console.error('MongoDB Error:', err.message);
-            ret.error = 'Database error occurred';
-            res.status(500).json(ret);
+        const uname = user.trim();
+        const mail = email.trim().toLowerCase();
+
+        // Pre-check duplicates
+        const existing = await db.collection('users').findOne({
+          $or: [{ user: uname }, { email: mail }]
+        });
+        if (existing) {
+          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
+        }
+
+        const hashed = await bcrypt.hash(password, 10);
+
+        const ins = await db.collection('users').insertOne({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          user: uname,
+          email: mail,
+          password: hashed,
+          isVerified: false,
+        });
+
+        // 201 required by your Jest test
+        res.status(201).json({ _id: ins.insertedId, success: true, error: '' });
+
+        // Skip email during tests to avoid open handles/logs
+        if (process.env.NODE_ENV !== 'test') {
+          const verifyToken = jwt.sign(
+            { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
+            process.env.JWT_EMAIL_SECRET || 'temp_secret',
+            { expiresIn: '1h' }
+          );
+          const verifyUrl = `https://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
+
+          sendMail({
+            to: mail,
+            subject: 'Verify your email',
+            html: `
+              <p>Hi ${firstName.trim()},</p>
+              <p>Click below to verify your email (expires in 1 hour):</p>
+              <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+            `
+          }).catch(err => console.error('Verification email failed:', err?.message || err));
+        }
+      } catch (err) {
+        if (err?.code === 11000) {
+          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
+        }
+        console.error('Register error:', err);
+        return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
         }
     });
 
-    // Refresh token endpoint - supports cookie-based refresh (web) or body/header refreshToken (mobile)
+
     router.post('/refresh', async (req, res) => {
         const token = req.cookies?.jid || req.body?.refreshToken || req.get('x-refresh-token');
         if(!token) return res.sendStatus(401);
@@ -201,7 +195,7 @@ export function createUsersRouter(db) {
         if(token) await removeRefreshToken(db, token);
         res.clearCookie('jid');
         res.sendStatus(204);
-    });    
+    });
 
 return router;
 }
