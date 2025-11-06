@@ -223,7 +223,7 @@ export function createUsersRouter(db) {
     }
 
     // Redirect to your frontend verification success page
-    res.redirect('https://4lokofridays.com/verify/success');
+    res.redirect('http://4lokofridays.com/verify/success');
     
   } catch (err) {
     console.error('Email verification error:', err);
