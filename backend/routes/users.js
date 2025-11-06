@@ -108,10 +108,9 @@ export function createUsersRouter(db) {
         }
     });
     
-        router.post('/register', async (req, res) => {
+      router.post('/register', async (req, res, next) => {
       // expects: { firstName, lastName, user, email, password }
       // returns: { _id, success, error }
-
       const ret = { _id: -1, success: false, error: '' };
 
       try {
@@ -119,20 +118,21 @@ export function createUsersRouter(db) {
 
         if (!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())) {
           ret.error = 'Missing fields';
-          return res.status(400).json(ret);
+          res.status(400).json(ret);
+          return; 
         }
 
-        // hash the password
-        const hashed = await bcrypt.hash(password, 10);
+        // hash the password before storing
+        const saltRounds = 10;
+        const hashed = await bcrypt.hash(password, saltRounds);
 
-        // create user
         const newAccount = await db.collection('users').insertOne({
-          firstName,
-          lastName,
-          user,
-          email,                 
-          password: hashed,
-          isVerified: false
+            firstName: firstName,
+            lastName: lastName,
+            user: user,
+            email: email,
+            password: hashed,
+            isVerified: false
         });
 
         // build verification link
@@ -163,7 +163,6 @@ export function createUsersRouter(db) {
         } catch (err) {
         
         if (err?.code === 11000) {
-          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
         }
         console.error('Register error:', err);
         return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
