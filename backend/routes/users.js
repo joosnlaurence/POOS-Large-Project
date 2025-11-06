@@ -143,7 +143,8 @@ export function createUsersRouter(db) {
         res.status(201).json({ _id: ins.insertedId, success: true, error: '' });
 
         // Skip email during tests to avoid open handles/logs
-        if (process.env.NODE_ENV !== 'test') {
+        const isRunningTests = !!process.env.JEST_WORKER_ID || process.env.CI === 'true';
+        if (!isRunningTests) {
           const verifyToken = jwt.sign(
             { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
             process.env.JWT_EMAIL_SECRET || 'temp_secret',
@@ -169,7 +170,6 @@ export function createUsersRouter(db) {
         return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
         }
     });
-
 
     router.post('/refresh', async (req, res) => {
         const token = req.cookies?.jid || req.body?.refreshToken || req.get('x-refresh-token');
