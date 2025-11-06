@@ -161,9 +161,6 @@ export function createUsersRouter(db) {
           .catch(err => console.error('❌ Failed to send verification email:', err?.message || err));
 
         } catch (err) {
-        
-        if (err?.code === 11000) {
-        }
         console.error('Register error:', err);
         return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
       }
@@ -193,7 +190,37 @@ export function createUsersRouter(db) {
         if(token) await removeRefreshToken(db, token);
         res.clearCookie('jid');
         res.sendStatus(204);
-    });    
+    });
+
+    router.get('/verify-email', async (req, res) => {
+        const token = (req.query.token || '').toString();
+        if (!token) return res.status(400).send('<h2>Missing token</h2>');
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_EMAIL_SECRET || 'temp_secret');
+            const userId = decoded.id;
+            const emailOriginal = decoded.email;
+
+            // Set isVerified to true
+            const result = await db.collection('users').updateOne(
+                { _id: new ObjectId(userId), email: emailOriginal },
+                { $set: { isVerified: true } }
+            );
+
+            if (result.matchedCount === 0) {
+                return res.status(404).send('<h2>User not found</h2>');
+            }
+
+            if (result.modifiedCount === 0) {
+                return res.send('<h2>Already verified ✅</h2>');
+            }
+
+            return res.send('<h2>✅ Email verified successfully!</h2>');
+        }   catch (err) {
+            console.error('❌ Verification error:', err.message);
+            return res.status(400).send('<h2>Invalid or expired link ❌</h2>');
+        }
+    });
 
 return router;
 }
