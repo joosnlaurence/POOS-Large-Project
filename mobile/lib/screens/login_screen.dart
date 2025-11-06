@@ -27,8 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
         headers: {"Content-Type": "application/json", "Accept": "application/json"},
         body: jsonEncode({"ident": username, "password": password}),
       );
+      print(resp.statusCode);
 
-      if (resp.statusCode == 200) {
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
         final data = jsonDecode(resp.body);
         final user = User.fromJson(data);
 
