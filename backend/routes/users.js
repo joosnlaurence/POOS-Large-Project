@@ -97,83 +97,67 @@ export function createUsersRouter(db) {
             res.status(500).json(ret);
         }
     });
+    
+        router.post('/register', async (req, res) => {
+      // expects: { firstName, lastName, user, email, password }
+      // returns: { _id, success, error }
 
-        router.post('/register', async (req, res, next) => {
-        // expects: {firstName, lastName, user, email, password}
-        // produces: {_id: ObjectId(...), success: True | False, error: ""}
+      const ret = { _id: -1, success: false, error: '' };
 
-        let ret = {
-            _id: -1,
-            success: false,
-            error: ''
-        };
+      try {
+        const { firstName, lastName, user, email, password } = req.body;
 
-        try {
-            const {firstName, lastName, user, email, password} = req.body;
-
-            if(!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())){
-                ret.error = 'Missing fields';
-                res.status(400).json(ret);
-                return;
-            }
-
-            // hash the password before storing
-            const saltRounds = 10;
-            const hashed = await bcrypt.hash(password, saltRounds);
-
-            const newAccount = await db.collection('users').insertOne({
-                firstName: firstName,
-                lastName: lastName,
-                user: user,
-                email: email,
-                password: hashed,
-                isVerified: false
-            });
-
-            // Generate a short-lived verification token (1 hour)
-            const verifyToken = jwt.sign(
-                { id: newAccount.insertedId.toString(), email: email },
-                process.env.JWT_EMAIL_SECRET || 'temp_secret',
-                { expiresIn: '1h' }
-            );
-
-            // Create a verification URL pointing to your backend route below
-            const verifyUrl = `http://4lokofridays.com/home?token=${encodeURIComponent(verifyToken)}`;
-
-            try {
-                await sendMail({
-                to: email,
-                subject: 'Verify your email',
-                html: `
-                    <p>Hi ${firstName},</p>
-                    <p>Click below to verify your email:</p>
-                    <a href="${verifyUrl}">${verifyUrl}</a>
-                    <p>(This link expires in 1 hour)</p>
-                `
-             });
-            console.log('✅ Sent verification link to', email);
-        } catch (mailErr) {
-            console.error('❌ Failed to send verification email:', mailErr.message);
+        if (!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())) {
+          ret.error = 'Missing fields';
+          return res.status(400).json(ret);
         }
-         
-            ret._id = newAccount.insertedId;
-            ret.success = true;
-            res.status(201).json(ret);
-        }
-        catch(err) {
-            ret.success = false;
-            // user and email have the 'unique' property in the database
-            // This error code indicates a collision when trying to insert
-            if(err?.code === 11000){
-                ret.error = 'Username/email already in use';
-                res.status(409).json(ret);
-                return;
-            }
 
-            console.error('MongoDB Error:', err.message);
-            ret.error = 'Database error occurred';
-            res.status(500).json(ret);
+        // hash the password
+        const hashed = await bcrypt.hash(password, 10);
+
+        // create user
+        const newAccount = await db.collection('users').insertOne({
+          firstName,
+          lastName,
+          user,
+          email,                 
+          password: hashed,
+          isVerified: false
+        });
+
+        // build verification link
+        const verifyToken = jwt.sign(
+          { id: newAccount.insertedId.toString(), email },
+          process.env.JWT_EMAIL_SECRET || 'temp_secret',
+          { expiresIn: '1h' }
+        );
+        const verifyUrl = `http://4lokofridays.com/home?token=${encodeURIComponent(verifyToken)}`;
+
+        ret._id = newAccount.insertedId;
+        ret.success = true;
+        res.status(200).json(ret);
+
+        sendMail({
+          to: email,
+          subject: 'Verify your email',
+          html: `
+            <p>Hi ${firstName},</p>
+            <p>Click below to verify your email:</p>
+            <a href="${verifyUrl}">${verifyUrl}</a>
+            <p>(This link expires in 1 hour)</p>
+          `
+        })
+          .then(info => console.log('✅ Sent verification link to', email, info?.messageId || ''))
+          .catch(err => console.error('❌ Failed to send verification email:', err?.message || err));
+
+        } catch (err) {
+        
+        if (err?.code === 11000) {
+          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
         }
+        console.error('Register error:', err);
+        return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
+      }
     });
     
     // Refresh token endpoint
