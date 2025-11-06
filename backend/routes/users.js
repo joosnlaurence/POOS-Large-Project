@@ -98,7 +98,7 @@ export function createUsersRouter(db) {
         }
     });
 
-    router.post('/register', async (req, res, next) => {
+        router.post('/register', async (req, res, next) => {
         // expects: {firstName, lastName, user, email, password}
         // produces: {_id: ObjectId(...), success: True | False, error: ""}
 
@@ -130,22 +130,32 @@ export function createUsersRouter(db) {
                 isVerified: false
             });
 
+            // Generate a short-lived verification token (1 hour)
+            const verifyToken = jwt.sign(
+                { id: newAccount.insertedId.toString(), email: email },
+                process.env.JWT_EMAIL_SECRET || 'temp_secret',
+                { expiresIn: '1h' }
+            );
+
+            // Create a verification URL pointing to your backend route below
+            const verifyUrl = `http://4lokofridays.com/home?token=${encodeURIComponent(verifyToken)}`;
+
             try {
-              await sendMail({
-                to: (email || '').toLowerCase(),
-                subject: 'Welcome aboard! Verify your email',
+                await sendMail({
+                to: email,
+                subject: 'Verify your email',
                 html: `
-                  <p>Ahoy, ${firstName}!</p>
-                  <p>Your account has been created successfully.</p>
-                  <p>You can sign in now. We’ll enable full features once your email is verified.</p>
-                  <!-- we’ll replace this with a real link in step 2 -->
-                  <p>For now, just log in and explore the app.</p>
+                    <p>Hi ${firstName},</p>
+                    <p>Click below to verify your email:</p>
+                    <a href="${verifyUrl}">${verifyUrl}</a>
+                    <p>(This link expires in 1 hour)</p>
                 `
-              });
-            } catch (mailErr) {
-              console.warn('Register: email send failed:', mailErr?.message || mailErr);
-            }
-                    
+             });
+            console.log('✅ Sent verification link to', email);
+        } catch (mailErr) {
+            console.error('❌ Failed to send verification email:', mailErr.message);
+        }
+         
             ret._id = newAccount.insertedId;
             ret.success = true;
             res.status(201).json(ret);
@@ -165,7 +175,7 @@ export function createUsersRouter(db) {
             res.status(500).json(ret);
         }
     });
-
+    
     // Refresh token endpoint
     router.post('/refresh', async (req, res) => {
         const token = req.cookies?.jid;
