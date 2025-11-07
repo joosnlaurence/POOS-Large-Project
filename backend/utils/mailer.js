@@ -1,27 +1,21 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: 'largeprojectmailer.test@gmail.com',
-    pass: 'cxjpjbnmaofwwwy'  // your Gmail app password
-  }
-});
+// Set API key from environment variable
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export async function sendMail({ to, subject, html }) {
+  const msg = {
+    to,
+    from: 'largeprojectmailer.test@gmail.com',
+    subject,
+    html,
+  };
+
   try {
-    const info = await transporter.sendMail({
-      from: '"Large Project" <largeprojectmailer.test@gmail.com>',
-      to,
-      subject,
-      html
-    });
-    console.log('✅ Email sent:', info.messageId);
-    return info;
-  } catch (err) {
-    console.error('❌ Email send error:', err);
-    throw err;
+    await sgMail.send(msg);
+    console.log('✅ Email sent successfully to:', to);
+  } catch (error) {
+    console.error('❌ SendGrid error:', error?.response?.body || error);
+    throw error;
   }
 }

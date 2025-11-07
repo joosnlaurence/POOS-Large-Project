@@ -73,6 +73,7 @@ jobs:
             cd /var/mainServer
             cat > .env << EOF
             MONGO_URI=${{ secrets.MONGO_URI }}
+            SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
             EOF  
 
       - name: Install dependencies and restart server
