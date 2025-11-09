@@ -8,6 +8,8 @@ import { MongoClient, ObjectId } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { verifyToken } from './middleware/auth.js';
 import { createUsersRouter } from './routes/users.js';
+import { createBuildingsRouter } from './routes/buildings.js';
+import { createFountainsRouter } from './routes/fountains.js';
 import { createVotesRouter } from './routes/votes.js';
 
 export function createApp(db) {
@@ -22,6 +24,12 @@ export function createApp(db) {
 
     // Give the express app access to the API endpoints found in ./router/users
     app.use('/api/users', createUsersRouter(db));
+
+    // Give the express app access to the API endpoints found in ./router/buildings
+    app.use('/api/buildings', createBuildingsRouter(db));
+
+    // Give the express app access to the API endpoints found in ./router/fountains
+    app.use('/api/fountains', createFountainsRouter(db));
     // Give app access to endpoints related to the voting system
     app.use('/api/votes', createVotesRouter(db));
 
