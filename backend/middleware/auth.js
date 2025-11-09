@@ -9,11 +9,11 @@ export function verifyToken(req, res, next) {
     let token;
     if (process.env.NODE_ENV === 'development') {
         const devUser = {
-            _id: '507f1f77bcf86cd799439011',
+            _id: '690d02b181b430779f124555',
             firstName: 'dev',
             lastName: 'dev',
             user: 'devuser',
-            email: 'd@user.com',
+            email: 'dev@user.com',
             password: '$2b$10$ywxzcjOK54Rae1YkUCyyPuHrK.yo6nToPZpkYjBjnDGDxObVKWwFO'
         };
         token = generateAccessToken(devUser);

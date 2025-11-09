@@ -39,7 +39,7 @@ export async function setupDatabase() {
     if(process.env.CI === true) {
         mongo_uri = 'mongodb://localhost:27017';
     }
-    else if(process.env.NODE_ENV === 'production'){
+    else if(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development'){
         mongo_uri = process.env.MONGO_URI;
     }
     
@@ -49,11 +49,12 @@ export async function setupDatabase() {
         const client = new MongoClient(mongo_uri);
         await client.connect();
         db = client.db('large-proj-data');
+        const secondsInDay = 24 * 60 * 60;
 
         // Initialize indexes if we're using the test database through GitHub Actions
         await db.collection('votes').createIndex(
             { timestamp: 1 },
-            { expireAfterSeconds: 7 * 24 * 60 * 60 }
+            { expireAfterSeconds: 2 * secondsInDay }
         );
         await db.collection('votes').createIndex(
             { userId: 1, fountainId: 1, timestamp: -1 }
