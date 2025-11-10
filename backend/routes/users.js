@@ -17,6 +17,8 @@ import {
 // Import utility for email verification and password reset
 import { sendMail } from '../utils/mailer.js';
 
+import * as URL from '../utils/url.js';
+
 /**
  * Modularizes the API endpoints related to user accounts for ease of use in production and testing.
  * Contains the 
@@ -41,6 +43,7 @@ export function createUsersRouter(db) {
             firstName: '',
             lastName: '',
             email: '',
+            isVerified: false,
             success: false,
             error: ''
         };
@@ -83,6 +86,7 @@ export function createUsersRouter(db) {
             ret.firstName = account.firstName;
             ret.lastName = account.lastName;
             ret.email = account.email;
+            ret.isVerified = account.isVerified;
             ret.success = true;
 
             if (isMobile) {
@@ -148,7 +152,7 @@ export function createUsersRouter(db) {
             process.env.JWT_EMAIL_SECRET || 'temp_secret',
             { expiresIn: '1h' }
           );
-          const verifyUrl = `http://4lokofridays.com/api/users/verify-email?token=${encodeURIComponent(verifyToken)}`;
+          const verifyUrl = `${URL.buildPath('api/users/verify-email')}?token=${encodeURIComponent(verifyToken)}`;
 
           sendMail({
             to: mail,
@@ -222,7 +226,7 @@ export function createUsersRouter(db) {
     }
 
     // Redirect to your frontend verification success page
-    res.redirect('http://4lokofridays.com/verify/success');
+    res.redirect(URL.buildPath('verify/success'));
     
   } catch (err) {
     console.error('Email verification error:', err);
@@ -264,7 +268,7 @@ router.post('/request-password-reset', async (req, res) => {
         { expiresIn: '1h' }
       );
 
-      const resetUrl = `http://4lokofridays.com/change-password?token=${encodeURIComponent(resetToken)}`;
+      const resetUrl = `${URL.buildPath('change-password')}?token=${encodeURIComponent(resetToken)}`;
 
       await sendMail({
         to: mail,
