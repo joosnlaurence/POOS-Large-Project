@@ -14,30 +14,24 @@ await jest.unstable_mockModule('../../utils/mailer.js', () => ({
 // We use supertest so we don't need to start up the server for testing
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
-import { createApp, setupDatabase } from '../../app.js';
+import { createApp } from '../../app.js';
+import { setupDatabase, closeDatabase, reset } from '../setup.js';
+import { ObjectId } from 'mongodb';
 
 let app, db;
 
 beforeAll(async () => {
-    // 'true' by default on GitHub Actions
-    // undefined on local dev
-    // if(process.env.CI !== 'true') {
-    //     delete process.env.MONGO_URI
-    // }
-
-    // Keep this for now until we either make a test database 
-    // or use the mongo memory server
-    delete process.env.MONGO_URI;
-
     db = await setupDatabase();
     app = createApp(db);
 });
 
 // Runs before each test
 beforeEach(async () => {
-    if(db.reset) {
-        await db.reset();
-    }
+    await reset(db);
+});
+
+afterAll(async () => {
+    await closeDatabase();
 });
 
 function createValidUser(overrides = {}) {
@@ -96,7 +90,8 @@ describe('POST /api/users/register', () => {
         
         const response = await registerUser(app, user);
 
-        const dbUser = await db.collection('users').findOne({_id: response.body._id});
+        const dbUser = await db.collection('users').findOne({_id: new ObjectId(response.body._id)});
+        console.log(response.body);
 
         expect(await bcrypt.compare(user.password, dbUser.password)).toBe(true);
     });

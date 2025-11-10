@@ -3,11 +3,16 @@ name: Deploy POOS Large Project
 on:
   push:
     branches: [ main ]
+  workflow_run:
+    workflows: ["Backend tests"]
+    types:
+      - completed
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -74,6 +79,7 @@ jobs:
             cat > .env << EOF
             MONGO_URI=${{ secrets.MONGO_URI }}
             SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+            NODE_ENV=production
             EOF  
 
       - name: Install dependencies and restart server

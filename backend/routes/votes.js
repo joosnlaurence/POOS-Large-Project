@@ -45,7 +45,6 @@ export function createVotesRouter(db) {
                 return res.status(400).json(ret);
             }
             const rating = req.body.rating;
-            console.log(req.user.userId);
             const userId = new ObjectId(req.user.userId);
 
             if(!fountainId || !rating) {
@@ -106,8 +105,8 @@ export function createVotesRouter(db) {
                         { _id: fountainId },
                         { $set: {filter: newFilterColor, lastUpdate: new Date()} }
                     );
+                    ret.newFilterColor = newFilterColor;
                 }
-                ret.newFilterColor = newFilterColor;
             } catch(err) {
                 console.log('Error in /api/votes: ', err.message);
                 ret.error = "Error updating fountain filter"

@@ -1,19 +1,22 @@
 import request from 'supertest';
-import { createApp, setupDatabase } from '../../app.js';
+import { createApp } from '../../app.js';
+import { setupDatabase, closeDatabase, reset } from '../setup.js';
+import { ObjectId } from 'mongodb';
 
 let app, db;
 
 beforeAll(async () => {
-    console.log("MONGO_URI " + process.env.MONGO_URI);
     db = await setupDatabase();
     app = createApp(db);
 });
 
 // Runs before each test
 beforeEach(async () => {
-    if(db.reset) {
-        await db.reset();
-    }
+    await reset(db);
+});
+
+afterAll(async () => {
+    await closeDatabase();
 });
 
 describe('POST /api/votes', () => {

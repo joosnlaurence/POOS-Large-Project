@@ -7,37 +7,14 @@ on:
     branches: [ main ]
 
 jobs: 
-# PLACEHOLDER for now until we actually have tests to run for frontend
-# test-frontend: 
-#   name: Frontend tests
-#   runs-on: ubuntu-latest
 
-#   steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
-
-#     - name: Setup Node.js
-#       uses: actions/setup-node@v3
-#       with: 
-#         node-version: '22.18'
-#         cache: 'npm'
-#         cache-dependency-path: frontend/package-lock.json
-    
-#     - name: Install frontend dependencies
-#       working-directory: ./frontend
-#       run: npm ci
-
-#     - name: Run tests
-#       working-directory: ./frontend
-#       run: npm test
 
   test-backend:
     name: Backend tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        mongodb-version: ['6.0', '7.0', '8.0']
-      
+    env:
+      CI: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3  
@@ -49,9 +26,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json  
 
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
-
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm ci  
@@ -59,5 +33,3 @@ jobs:
       - name: Run backend tests
         working-directory: ./backend
         run: npm test
-        env:
-          CI: true
