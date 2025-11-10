@@ -91,7 +91,6 @@ describe('POST /api/users/register', () => {
         const response = await registerUser(app, user);
 
         const dbUser = await db.collection('users').findOne({_id: new ObjectId(response.body._id)});
-        console.log(response.body);
 
         expect(await bcrypt.compare(user.password, dbUser.password)).toBe(true);
     });

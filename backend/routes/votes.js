@@ -39,7 +39,6 @@ export function createVotesRouter(db) {
             error: ''
         };
 
-        
         try {
             const userId = new ObjectId(req.user.userId);
 
@@ -54,8 +53,8 @@ export function createVotesRouter(db) {
             const rating = req.body.rating;
 
             // Validate incoming vote requests
-            const {validReq, errors} = validateVote(fountainId, rating);
-            if(!validReq) {
+            const {valid, errors} = validateVote(fountainId, rating);
+            if(!valid) {
                 ret.error = errors.join(', ');
                 return res.status(400).json(ret);
             }
@@ -66,11 +65,11 @@ export function createVotesRouter(db) {
             await upsertVote(votes, userId, fountainId, rating);
 
             try {
-                const { filterChanged, newFilterColor } = await updateFountainFilter(db, fountaindId);
+                const { filterChanged, newFilterColor } = await updateFountainFilter(db, fountainId);
                 ret.filterChanged = filterChanged;
-                ret.newFilterColor = newFilterColor;
+                ret.newFilterColor = filterChanged ? newFilterColor : '';
             } catch(err) {
-                console.log('Error in /api/votes: ', err.message);
+                console.error('Error in /api/votes: ', err.message);
                 ret.error = "Error updating fountain filter"
                 return res.status(500).json(ret);
             }
