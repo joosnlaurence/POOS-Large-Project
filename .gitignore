@@ -91,3 +91,4 @@ vite.config.ts.timestamp-*
 
 .secrets
 .vscode
+.idea
