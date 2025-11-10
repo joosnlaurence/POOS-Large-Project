@@ -10,7 +10,6 @@ beforeAll(async () => {
     app = createApp(db);
 });
 
-// Runs before each test
 beforeEach(async () => {
     await reset(db);
 });
