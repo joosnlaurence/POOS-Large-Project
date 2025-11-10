@@ -1,9 +1,3 @@
-/* This is similar to the mock database we already have, except that it runs 
-   an actual MongoDB instance in RAM. Slower than the mock db, but better for
-   integration tests since it installs all of the MongoDB functions. We might 
-   use this later, but for now I want to test the mock database. */
-// import { MongoMemoryServer } from 'mongodb-memory-server';
-
 import { jest } from '@jest/globals';
 
 // Mock the mailer BEFORE importing app code 
