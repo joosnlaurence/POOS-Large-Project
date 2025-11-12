@@ -80,7 +80,8 @@ export function createFountainsRouter(db) {
   // {
   //   location: { building: string, description?: string, coordinates?: any },
   //   filter: null | "red" | "yellow" | "green",
-  //   image: "<link>",
+  //   floor?: int
+  //   imgUrl: "<link>",
   //   lastUpdate?: Date|string,
   //   buildingId?: ObjectId|string   // optional: to sync buildings.fountainIds
   // }
@@ -88,7 +89,7 @@ export function createFountainsRouter(db) {
   router.post('/create', async (req, res) => {
     let ret = { _id: -1, success: false, error: '' };
     try {
-      const { location, filter, lastUpdate, buildingId } = req.body || {};
+      const { location, filter, floor, imgUrl, lastUpdate, buildingId } = req.body || {};
 
       const buildingName = location?.building;
       if (!buildingName || !filter) {
@@ -102,6 +103,8 @@ export function createFountainsRouter(db) {
           description: location?.description || '',
           coordinates: location?.coordinates ?? null
         },
+        floor: floor || 1,
+        imgUrl: String(imgUrl),
         filter: String(filter),
         lastUpdate: coerceDate(lastUpdate) || new Date()
       };
