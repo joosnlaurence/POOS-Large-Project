@@ -160,6 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -172,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          decoration: TextDecoration.underline,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
@@ -189,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
