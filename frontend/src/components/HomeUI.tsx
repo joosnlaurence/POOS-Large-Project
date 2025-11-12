@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
 import LoadBuildings from './LoadBuildings';
+import LoadFountains from './LoadFountains';
 import type { Building } from '../types/Building';
+import type { Fountain } from '../types/Fountain';
+import './HomeUI.css';
+
 
 function AutoLocationMarker()
 {
@@ -43,10 +47,47 @@ function HomeUI() {
 
     const buildings = LoadBuildings();
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+    const [fountains, setFountains] = useState<Fountain[]>([]);
+    const [showBuildings, setShowBuildings] = useState(true);
+    const [selectedFountain, setSelectedFountain] = useState<Fountain | null>(null);
+    
+
+    async function handleSetSelectedBuilding(b: Building | null)
+    {
+        setSelectedBuilding(b);
+        setSelectedFountain(null);
+
+        if (b === null)
+        {
+            setFountains([]);
+            setShowBuildings(true);
+        }
+        else
+        {
+            
+            const map = mapRef.current;
+            if (map && "flyTo" in map)
+            {
+                (map as any).flyTo(b.buildingLocation, 19);
+            }
+            setShowBuildings(false);
+            const loadedFountains = await LoadFountains(b.fountainIds);
+            setFountains(loadedFountains);
+        }
+    }
+
+    function handleSelectFountain(fountain: Fountain)
+    {
+        setSelectedFountain(fountain);
+        const map = mapRef.current;
+        if (map && "flyTo" in map)
+        {
+            (map as any).flyTo(fountain.fountainLocation, 19);
+        }
+    }
 
     return (
-        <div style={{ display: 'flex', width: '100%', height: '75vh' }}>
-            {/* Map */}
+        <div className="home-container">
             <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }}>
                 <TileLayer
                     attribution='&copy; OpenStreetMap contributors'
@@ -56,49 +97,46 @@ function HomeUI() {
 
                 <AutoLocationMarker />
 
-                {buildings.map((b) => (
+                {showBuildings && buildings.map((b) => (
                     <Marker
                         key={b.id}
                         position={b.buildingLocation}
                         eventHandlers={{
-                            click: () => setSelectedBuilding(b),
+                            click: () => handleSetSelectedBuilding(b),
                         }}
                     />
                 ))}
+
+                {selectedFountain && (
+                    <Marker position={selectedFountain.fountainLocation}>
+                        <Popup>{selectedFountain.name}</Popup>
+                    </Marker>
+                )}
             </MapContainer>
 
-            {/* Info Panel (conditionally rendered) */}
             {selectedBuilding && (
-                <div style={{
-                    width: '300px',
-                    backgroundColor: '#f9f9f9',
-                    color: 'black', // Make text black
-                    padding: '10px',
-                    borderLeft: '1px solid #ccc',
-                    overflowY: 'auto',
-                    position: 'relative'
-                }}>
-                    {/* Close Button */}
-                    <button
-                        onClick={() => setSelectedBuilding(null)}
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            background: 'transparent',
-                            border: 'none',
-                            fontSize: '16px',
-                            cursor: 'pointer',
-                            color: 'black' // Make button text black too
-                        }}
-                    >
-                        ✕
-                    </button>
+                <div className="info-panel">
+                    <button onClick={() => handleSetSelectedBuilding(null)} className="close-button">✕</button>
 
                     <h2>{selectedBuilding.name}</h2>
-                    <p>Fountains: {selectedBuilding.fountainIds.length}</p>
-                    <p>Latitude: {selectedBuilding.buildingLocation[0]}</p>
-                    <p>Longitude: {selectedBuilding.buildingLocation[1]}</p>
+
+                    <h3>Fountains</h3>
+
+                    <div className="fountain-list">
+                        {fountains.length === 0 ? (
+                            <p className="no-fountains">No fountains found.</p>
+                        ) : (
+                            fountains.map((fountain) => (
+                                <button
+                                    key={fountain.id}
+                                    className="fountain-button"
+                                    onClick={() => handleSelectFountain(fountain)}
+                                >
+                                    {fountain.name}
+                                </button>
+                            ))
+                        )}
+                    </div>
                 </div>
             )}
         </div>
