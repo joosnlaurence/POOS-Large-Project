@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../models/user.dart';
 import 'login_screen.dart';
 
@@ -12,6 +14,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? selectedLocation = "UCF Building";
+  final MapController _mapController = MapController();
+  
+  // Center locations from your React code
+  final LatLng centerLocation = LatLng(28.602348, -81.200227);
+  final LatLng markerLocation = LatLng(28.600484146464797, -81.20139027355133);
+  
+  LatLng? userLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Center(
                   child: Text(
                     "Hello ${widget.user.firstName} ${widget.user.lastName}!",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -32,8 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.logout),
-                title: Text("Logout"),
+                leading: const Icon(Icons.logout),
+                title: const Text("Logout"),
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -50,19 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-
-        /// ✅ gold tile background
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/tile.png"),
             fit: BoxFit.cover,
           ),
         ),
-
         child: SafeArea(
           child: Column(
             children: [
-              /// ✅ top bar w/ hamburger + logo
+              /// Top bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(
@@ -75,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
                           color: Colors.brown.shade600,
                           borderRadius: BorderRadius.circular(12),
@@ -83,13 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: Center(
                           child: RichText(
-                            text: TextSpan(
+                            text: const TextSpan(
                               style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
                               children: [
-                                TextSpan(text: "Where’s "),
+                                TextSpan(text: "Where's "),
                                 TextSpan(
                                   text: "My",
                                   style: TextStyle(color: Colors.greenAccent),
@@ -108,25 +114,68 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              /// ✅ MAP IMAGE
+              /// INTERACTIVE MAP
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: double.infinity,
-                      color: Colors.black,
+                    child: FlutterMap(
+                      mapController: _mapController,
+                      options: MapOptions(
+                        initialCenter: centerLocation,
+                        initialZoom: 17.0,
+                        onTap: (tapPosition, point) {
+                          // User tapped on map - you can add location functionality here
+                          setState(() {
+                            userLocation = point;
+                          });
+                        },
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: const ['a', 'b', 'c'],
+                          userAgentPackageName: 'com.example.mobile',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            // Fixed marker from your React code
+                            Marker(
+                              point: markerLocation,
+                              width: 40,
+                              height: 40,
+                              child: const Icon(
+                                Icons.location_pin,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            ),
+                            // User location marker (if set)
+                            if (userLocation != null)
+                              Marker(
+                                point: userLocation!,
+                                width: 40,
+                                height: 40,
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: Colors.blue,
+                                  size: 40,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
 
-              /// ✅ Location dropdown box
+              /// Location dropdown
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.cyan,
                     borderRadius: BorderRadius.circular(16),
@@ -134,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         "Select Your Location",
                         style: TextStyle(
                           fontSize: 20,
