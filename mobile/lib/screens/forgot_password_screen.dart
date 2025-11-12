@@ -27,7 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     try {
       final resp = await http.post(
-        Uri.parse("http://4lokofridays.com/api/users/request-password-reset"),
+        Uri.parse("https://4lokofridays.com/api/users/request-password-reset"),
         headers: {"Content-Type": "application/json", "Accept": "application/json"},
         body: jsonEncode({"email": email}),
       );
