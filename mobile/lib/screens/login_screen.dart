@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final resp = await http.post(
-        Uri.parse("http://4lokofridays.com/api/users/login"),
+        Uri.parse("https://4lokofridays.com/api/users/login"),
         headers: {"Content-Type": "application/json", "Accept": "application/json"},
         body: jsonEncode({"ident": username, "password": password}),
       );
