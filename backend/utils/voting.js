@@ -60,6 +60,9 @@ export function validateVote(fountainId, rating) {
     };
 }
 
+export const UPDATED_VOTE = 2;
+export const ADDED_VOTE = 1;
+
 export async function upsertVote(votesCollection, userId, fountainId, rating) {
     const mostRecent = await votesCollection.findOne(
         { userId, fountainId },
@@ -68,20 +71,22 @@ export async function upsertVote(votesCollection, userId, fountainId, rating) {
 
     if(!mostRecent) {
         await votesCollection.insertOne({userId, fountainId, rating, timestamp: new Date()});
-        return;
+        return ADDED_VOTE;
     }
     
     // Let the user update their vote if it was made recently
     const hoursAferMostRecent = (Date.now() - mostRecent.timestamp.getTime()) / (1000 * 60 * 60);
     
-    if(hoursAferMostRecent < 2 ){
+    if(hoursAferMostRecent < 48){
         await votesCollection.updateOne(
             { _id: mostRecent._id },
-            { $set: {rating, timestamp: new Date()} }
+            { $set: {rating} }
         );
+        return UPDATED_VOTE;
     }
     else {
         await votesCollection.insertOne({userId, fountainId, rating, timestamp: new Date()});
+        return ADDED_VOTE;
     }
 }
 

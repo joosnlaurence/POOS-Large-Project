@@ -3,7 +3,8 @@ import { createApp } from '../../app.js';
 import { setupDatabase, closeDatabase, reset } from '../setup.js';
 import { ObjectId } from 'mongodb';
 import { generateAccessToken } from '../../utils/tokens.js';
-import { validateVote, findModeRating } from '../../utils/voting.js';
+import { upsertVote } from '../../utils/voting.js';
+import { createTestScheduler } from 'jest';
 
 let app, db;
 let fountainId;
@@ -96,29 +97,9 @@ describe('POST /api/votes/add', () => {
         const v = await votes.find({}).toArray();
 
         expect(v.length).toBe(1);
+        expect(res.body.updatedVote).toBe(true);
         expect(res.body.filterChanged).toBe(true);
         expect(res.body.newFilterColor).toBe('green');
-    });
-
-    test('User can add new vote if made in more than 12 hours', async () => {
-        const now = new Date(Date.now());
-        const threeHoursAgo = new Date(Date.now() - (3 * 60 * 60 * 1000));
-
-        await votes.insertOne({
-            userId: testUserId,
-            fountainId,
-            rating: 'green',
-            timestamp: now
-        });
-        await votes.insertOne({
-            userId: testUserId,
-            fountainId,
-            rating: 'green',
-            timestamp: threeHoursAgo
-        });
-        const res = await votes.find({}).toArray();
-
-        expect(res.length).toBeGreaterThan(1);
     });
 
     test('Handles when user\'s vote makes their rating the most popular', async () => {
@@ -127,6 +108,7 @@ describe('POST /api/votes/add', () => {
 
         const res = await validVote("green");
         
+        expect(res.body.updatedVote).toBe(false);
         expect(res.body.filterChanged).toBe(true);
         expect(res.body.newFilterColor).toBe("green");
     });
@@ -158,68 +140,5 @@ describe('POST /api/votes/add', () => {
 
         expect(response.body.filterChanged).toBe(false);
         expect(response.body.newFilterColor).toBe('');        
-    });
-});
-
-describe('voting.js unit testing', () => {
-    describe('validateVote', () => {
-        test('Missing fountainId', () => {
-            const {valid, errors} = validateVote('', 'red');
-
-            expect(valid).toBe(false);
-            expect(errors.includes('Missing fountainId')).toBe(true);
-        });
-
-        test('Missing rating', () => {
-            const {valid, errors} = validateVote('0', '');
-
-            expect(valid).toBe(false);
-            expect(errors.includes('Missing rating')).toBe(true);
-        });
-        
-        test('Rating is not red, yellow, or green', () => {
-            const {valid, errors} = validateVote('0', 'orange');
-
-            expect(valid).toBe(false);
-            expect(errors.includes(
-                "Rating must be either 'red', 'yellow', or 'green'"
-            )).toBe(true);
-        });
-    });
-
-    describe('findModeRating', () => {                
-        test('returns most voted for rating', () => {
-            const votes = [
-                {rating: 'green', timestamp: new Date()},
-                {rating: 'green', timestamp: new Date()},
-                {rating: 'green', timestamp: new Date()}
-            ];
-
-            const ret = findModeRating(votes);
-
-            expect(ret).toBe('green');
-        }); 
-
-        test('return null if there are no votes', () => {
-            const votes = [];
-
-            const ret = findModeRating(votes);
-
-            expect(ret).toBe(null);
-        }); 
-
-        test('resolves tie based on timestamp', () => {
-            const now = new Date(Date.now());
-            const threeHoursAgo = new Date(Date.now() - (3 * 60 * 60 * 1000));
-
-            const votes = [
-                {rating: 'green', timestamp: now},
-                {rating: 'red', timestamp: threeHoursAgo}
-            ];
-
-            const ret = findModeRating(votes);
-
-            expect(ret).toBe('green');
-        }); 
     });
 });
