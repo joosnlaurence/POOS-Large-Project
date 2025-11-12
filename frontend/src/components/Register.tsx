@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 import * as URL from '../url.ts';
 
@@ -10,6 +11,8 @@ function Register()
     const [loginEmail,setEmail] = React.useState('');
     const [loginFirstName,setFirstName] = React.useState('');
     const [loginLastName,setLastName] = React.useState('');
+
+    const navigate = useNavigate();
 
     async function doLogin(event:any) : Promise<void>
     {
@@ -35,7 +38,7 @@ function Register()
                 localStorage.setItem('user_data', JSON.stringify(user));
   
                 setMessage('');
-                window.location.href = '/home';
+                navigate('/home');
             }
         }
         catch(error:any)
@@ -162,7 +165,7 @@ function Register()
         <span>Already have an account?</span>
         <span
           id="loginReturn"
-          onClick={() => (window.location.href = "/login")}
+          onClick={() => (navigate("/login"))}
         >
           Sign in →
         </span>

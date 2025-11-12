@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import * as URL from '../url.ts';
 
@@ -7,6 +8,7 @@ function Login()
     const [message,setMessage] = useState('');
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
+    const navigate = useNavigate();
 
 
     async function doLogin(event:any) : Promise<void>
@@ -33,7 +35,7 @@ function Login()
                 localStorage.setItem('user_data', JSON.stringify(user));
   
                 setMessage('');
-                window.location.href = '/home';
+                navigate('/home');
             }
         }
         catch(error:any)
@@ -104,7 +106,7 @@ function Login()
                <span>New to our crew?</span>
                <span
                   id="createAccountPrompt"
-                  onClick={() => (window.location.href = "/register")}
+                  onClick={() => (navigate("/register"))}
                 >
                   Registarr here →
                 </span>
@@ -114,7 +116,7 @@ function Login()
                  <span>Forgot yer secret key?</span>
                  <span
                     id="forgotPasswordPrompt"
-                    onClick={() => (window.location.href = "/reset-password")}
+                    onClick={() => (navigate("/reset-password"))}
                  >
               {" "}Reset it here →
             </span>
