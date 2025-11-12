@@ -1,36 +1,46 @@
-import { useRef, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
+import { useEffect, useRef, useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
+
+function AutoLocationMarker()
+{
+    const [position, setPosition] = useState<[number, number] | null>(null);
+    const map = useMap();
+
+    useEffect(() => {
+        // Try to get the location immediately, then update every 5 seconds
+        const updateLocation = () => {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const newPos: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+                    setPosition(newPos);
+                    //map.flyTo(newPos, map.getZoom());
+                },
+                (err) => {
+                    console.error("Error getting location:", err);
+                },
+                { enableHighAccuracy: true }
+            );
+        };
+
+        updateLocation(); // initial call
+        const interval = setInterval(updateLocation, 5000); // every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [map]);
+
+    return position === null ? null : (
+        <Marker position={position}>
+            <Popup>You are here</Popup>
+        </Marker>
+    );
+}
 
 function HomeUI()
 {
     const mapRef = useRef(null);
     const centerLocation: [number, number] = [28.602348, -81.200227];
     const centerLocation2: [number, number] = [28.600484146464797, -81.20139027355133];
-    
-    function LocationMarker() {
-        const [position, setPosition] = useState(null)
-        const map = useMapEvents({
-            click() {
-                map.locate()
-            },
-            locationfound(e) {
-                
-                handleSetPosition(e)
-                //map.flyTo(e.latlng, map.getZoom())
-            },
-        })
-
-        function handleSetPosition( e: any ) : void
-        {
-            setPosition( e.latlng );
-        }
-
-        return position === null ? null : (
-            <Marker position={position}>
-                <Popup>You are here</Popup>
-            </Marker>
-        )
-    }
+    const centerLocation3: [number, number] = [28.6020736, -81.1986191];
 
     return(
         //IMPORTANT ALSO TO SET A SIZE OF THE MAP OR ELSE IT ALSO WON'T RENDER
@@ -42,10 +52,24 @@ function HomeUI()
 
             <Marker position={centerLocation2}>
                 <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
+                    <div>
+                        A pretty CSS3 popup. <br /> Library.
+                        <button>TEST</button>
+
+                    </div>
                 </Popup>
             </Marker>
-            <LocationMarker />
+
+            <Marker position={centerLocation3}>
+                <Popup>
+                    <div>
+                        A pretty CSS3 popup. <br /> Easily customizable.
+                        <button>TEST</button>
+
+                    </div>
+                </Popup>
+            </Marker>
+            <AutoLocationMarker />
         </MapContainer>
     );
 }
