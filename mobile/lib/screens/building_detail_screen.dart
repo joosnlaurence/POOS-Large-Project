@@ -71,8 +71,8 @@ class BuildingDetailScreen extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(text: "Where's ", style: TextStyle(color: Colors.white)),
-                          TextSpan(text: "My ", style: TextStyle(color: Colors.lightGreen)),
-                          TextSpan(text: "Water?", style: TextStyle(color: Colors.lightBlue)),
+                          TextSpan(text: "My ", style: TextStyle(color: Colors.lightBlue)),
+                          TextSpan(text: "Water?", style: TextStyle(color: Colors.lightGreen)),
                         ],
                       ),
                     ),
