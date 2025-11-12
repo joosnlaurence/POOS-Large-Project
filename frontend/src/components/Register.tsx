@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Register.css";
+import "../scss/Register.scss";
 import * as URL from '../url.ts';
 
 function Register()

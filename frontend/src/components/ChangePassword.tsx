@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import "./ChangePassword.css";
+import "../scss/ChangePassword.scss";
 import * as URL from "../url.ts";
 
 const ChangePassword = () => {

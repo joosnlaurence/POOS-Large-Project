@@ -10,8 +10,8 @@ function LoggedInName()
     useEffect(() => {
         const storedUser = localStorage.getItem('user_data');
         if (storedUser) {
-        const user = JSON.parse(storedUser);
-        setUserName(`${user.firstName} ${user.lastName}`);
+            const user = JSON.parse(storedUser);
+            setUserName(`${user.firstName} ${user.lastName}`);
         }
     }, []);
 
@@ -20,29 +20,21 @@ function LoggedInName()
         event.preventDefault();
 
         await fetch(URL.buildPath('api/users/logout'), {
-        method: "POST",
-        credentials: "include",     // send cookie so backend clears it
+            method: "POST",
+            credentials: "include",     // send cookie so backend clears it
         });
 
         navigate("/");
-    }
-
-    // function doLogout(event:any) : void
-    // {
-    //   event.preventDefault();
-        
-    //   localStorage.removeItem("user_data")
-    //   window.location.href = '/';
-    // };    
+    }   
 
     return (
         <div id="loggedInDiv">
         <span id="userName">Logged In As {userName}</span><br />
             <button
-            type="button"
-            id="logoutButton"
-            className="buttons"
-            onClick={doLogout}
+                type="button"
+                id="logoutButton"
+                className="buttons"
+                onClick={doLogout}
             >
             Log Out
             </button>

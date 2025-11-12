@@ -1,0 +1,42 @@
+// Imports all of bootstrap's CSS 
+@import "bootstrap/scss/bootstrap";
+
+* {
+    margin: 0 auto;
+}
+
+// I found this on stack overflow :)
+.white-stroke
+{
+    // text-shadow:
+    // -1px -1px 0 #ffffff,
+    // 1px -1px 0 #ffffff,
+    // -1px 1px 0 #ffffff,
+    // 1px 1px 0 #ffffff;  
+    -webkit-text-stroke-color: #ffffff;
+    -webkit-text-stroke-width: 1px;
+}
+
+$wheres-my-orange: #D06C0D;
+$wheres-my-green: #5A961F;
+$wheres-my-blue: #13C5E2;
+
+.wheres-my-water
+{
+    h1 {
+        -webkit-text-stroke-color: #ffffff;
+        -webkit-text-stroke-width: 1px;
+        font-weight: 900;
+        margin-bottom: 0;
+    }
+    
+    #wheres {
+        color: $wheres-my-orange;
+    }
+    #my {
+        color: $wheres-my-green;
+    }
+    #water {
+        color: $wheres-my-blue
+    }
+}

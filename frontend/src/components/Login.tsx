@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import "../scss/Login.scss";
 import * as URL from '../url.ts';
 
 function Login()
