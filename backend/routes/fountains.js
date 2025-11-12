@@ -79,7 +79,8 @@ export function createFountainsRouter(db) {
   // expects:
   // {
   //   location: { building: string, description?: string, coordinates?: any },
-  //   filter: "null" | "red" | "yellow" | "green",
+  //   filter: null | "red" | "yellow" | "green",
+  //   image: "<link>",
   //   lastUpdate?: Date|string,
   //   buildingId?: ObjectId|string   // optional: to sync buildings.fountainIds
   // }
