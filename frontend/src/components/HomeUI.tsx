@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
+import LoadBuildings from './LoadBuildings';
+import type { Building } from '../types/Building';
 
 function AutoLocationMarker()
 {
@@ -35,42 +37,71 @@ function AutoLocationMarker()
     );
 }
 
-function HomeUI()
-{
+function HomeUI() {
     const mapRef = useRef(null);
     const centerLocation: [number, number] = [28.602348, -81.200227];
-    const centerLocation2: [number, number] = [28.600484146464797, -81.20139027355133];
-    const centerLocation3: [number, number] = [28.6020736, -81.1986191];
 
-    return(
-        //IMPORTANT ALSO TO SET A SIZE OF THE MAP OR ELSE IT ALSO WON'T RENDER
-        <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{height: "75vh", width: "63.5vw"}}>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+    const buildings = LoadBuildings();
+    const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
 
-            <Marker position={centerLocation2}>
-                <Popup>
-                    <div>
-                        A pretty CSS3 popup. <br /> Library.
-                        <button>TEST</button>
+    return (
+        <div style={{ display: 'flex', width: '100%', height: '75vh' }}>
+            {/* Map */}
+            <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }}>
+                <TileLayer
+                    attribution='&copy; OpenStreetMap contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    maxZoom={19}
+                />
 
-                    </div>
-                </Popup>
-            </Marker>
+                <AutoLocationMarker />
 
-            <Marker position={centerLocation3}>
-                <Popup>
-                    <div>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                        <button>TEST</button>
+                {buildings.map((b) => (
+                    <Marker
+                        key={b.id}
+                        position={b.buildingLocation}
+                        eventHandlers={{
+                            click: () => setSelectedBuilding(b),
+                        }}
+                    />
+                ))}
+            </MapContainer>
 
-                    </div>
-                </Popup>
-            </Marker>
-            <AutoLocationMarker />
-        </MapContainer>
+            {/* Info Panel (conditionally rendered) */}
+            {selectedBuilding && (
+                <div style={{
+                    width: '300px',
+                    backgroundColor: '#f9f9f9',
+                    color: 'black', // Make text black
+                    padding: '10px',
+                    borderLeft: '1px solid #ccc',
+                    overflowY: 'auto',
+                    position: 'relative'
+                }}>
+                    {/* Close Button */}
+                    <button
+                        onClick={() => setSelectedBuilding(null)}
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: 'transparent',
+                            border: 'none',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            color: 'black' // Make button text black too
+                        }}
+                    >
+                        ✕
+                    </button>
+
+                    <h2>{selectedBuilding.name}</h2>
+                    <p>Fountains: {selectedBuilding.fountainIds.length}</p>
+                    <p>Latitude: {selectedBuilding.buildingLocation[0]}</p>
+                    <p>Longitude: {selectedBuilding.buildingLocation[1]}</p>
+                </div>
+            )}
+        </div>
     );
 }
 

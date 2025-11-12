@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import type { Building } from "../types/Building";
 import * as URL from '../url.ts';
 
-function BuildingLoader()
+function LoadBuildings()
 {
     const [buildings, setBuildings] = useState<Building[]>([]);
 
+    useEffect(() => {
+        fetchBuildings();
+    }, []);
     
-    async function fetchBuildings(event:any) : Promise<void>
+    async function fetchBuildings(event?:any) : Promise<void>
     {
-        event.preventDefault();
+        if (event) event.preventDefault(); // Only prevent if event exists
 
         try
         {    
@@ -24,7 +27,14 @@ function BuildingLoader()
             }
             else
             {
-                
+                const cleanedBuildings: Building[] = res.buildings.map((b: any) => ({
+                    id: b._id,
+                    name: b.name,
+                    buildingLocation: [b.pinCoords.latitude, b.pinCoords.longitude],
+                    fountainIds: b.fountainIds
+                }));
+
+                setBuildings(cleanedBuildings);
             }
         }
         catch(error:any)
@@ -34,10 +44,7 @@ function BuildingLoader()
         }
     };
 
-    return
-    (
-        {}
-    );
+    return buildings;
 }
 
-export default BuildingLoader;
+export default LoadBuildings;
