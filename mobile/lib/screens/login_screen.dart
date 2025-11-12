@@ -6,6 +6,7 @@ import '../models/user.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
 import 'forgot_password_screen.dart';
+import '../api/network.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,15 +24,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _password.text.trim();
 
     try {
-      final resp = await http.post(
-        Uri.parse("https://4lokofridays.com/api/users/login"),
-        headers: {"Content-Type": "application/json", "Accept": "application/json"},
-        body: jsonEncode({"ident": username, "password": password}),
+      final resp = await dio.post(
+        "/login",
+        data: {"ident": username, "password": password},
       );
+
       print(resp.statusCode);
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
-        final data = jsonDecode(resp.body);
+        final data = resp.data;
         final user = User.fromJson(data);
 
         if (!mounted) return;

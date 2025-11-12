@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import '../models/user.dart';
 import 'login_screen.dart';
 import 'building_detail_screen.dart';
+import '../api/network.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -81,12 +82,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text("Logout"),
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    (route) => false,
-                  );
+                onTap: () async {
+                  try {
+
+                    final resp = await dio.post("/logout");
+
+                    print(resp.statusCode);
+                    if (resp.statusCode == 204) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Logout failed: ${resp.statusCode}")),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error logging out: $e")),
+                    );
+                  }
                 },
               ),
             ],
