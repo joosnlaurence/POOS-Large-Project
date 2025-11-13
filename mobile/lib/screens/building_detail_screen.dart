@@ -337,6 +337,10 @@ Future<void> fetchFountains() async {
 Widget _buildFountainItem(String fountainId, String name, Color color, BuildContext context) {
   return GestureDetector(
     onTap: () {
+      // Find the fountain to get its description
+      final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
+      final description = fountain['location']?['description'] ?? '';
+      
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -345,6 +349,7 @@ Widget _buildFountainItem(String fountainId, String name, Color color, BuildCont
             fountainName: name,
             buildingName: widget.buildingName,
             filterStatus: _getStatusFromColor(color),
+            fountainDescription: description,
           ),
         ),
       );
