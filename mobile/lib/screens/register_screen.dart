@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final resp = await http.post(
-        Uri.parse("http://4lokofridays.com/api/users/register"),
+        Uri.parse("https://4lokofridays.com/api/users/register"),
         headers: {"Content-Type": "application/json", "Accept": "application/json"},
         body: jsonEncode({
           "firstName": firstName,
@@ -45,6 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           username: username,
           email: email,
           token: '', // optional if backend doesn't return token
+          isVerified: false,
         );
 
         if (!mounted) return;
