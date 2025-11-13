@@ -17,6 +17,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? selectedLocation = "UCF Buildings";
   final MapController _mapController = MapController();
+  
+  bool isVerified = false;
+  bool isLoadingVerification = true;
 
   final LatLng centerLocation = LatLng(28.602348, -81.200227);
 
@@ -49,6 +52,34 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    fetchVerificationStatus();
+  }
+
+  Future<void> fetchVerificationStatus() async {
+    try {
+      final response = await dio.post(
+        '/check-verification',
+        data: {"email": widget.user.email},
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        setState(() {
+          isVerified = response.data['isVerified'] ?? false;
+          isLoadingVerification = false;
+        });
+      }
+    } catch (err) {
+      print('Error fetching verification: $err');
+      setState(() {
+        isVerified = false;
+        isLoadingVerification = false;
+      });
+    }
+  }
+
   void navigateToBuilding(
     String buildingName,
     String buildingId,
@@ -65,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (_) => BuildingDetailScreen(
             buildingName: buildingName,
             buildingId: buildingId,
+            user: widget.user,
           ),
         ),
       );
@@ -77,93 +109,96 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
-  child: SafeArea(
-    child: ListView(
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.cyan.shade100,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        child: SafeArea(
+          child: ListView(
             children: [
-              Text(
-                "Hello ${widget.user.firstName} ${widget.user.lastName}!",
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              // Verification status badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              DrawerHeader(
                 decoration: BoxDecoration(
-                  color: widget.user.isVerified ? Colors.green : Colors.orange,
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.cyan.shade100,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      widget.user.isVerified ? Icons.verified : Icons.warning,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 6),
                     Text(
-                      widget.user.isVerified ? "Verified" : "Not Verified",
+                      "Hello ${widget.user.firstName} ${widget.user.lastName}!",
                       style: const TextStyle(
-                        color: Colors.white,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
                       ),
+                      textAlign: TextAlign.center,
                     ),
+                    const SizedBox(height: 12),
+                    // Verification status badge
+                    if (isLoadingVerification)
+                      const CircularProgressIndicator()
+                    else
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isVerified ? Colors.green : Colors.orange,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isVerified ? Icons.verified : Icons.warning,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isVerified ? "Verified" : "Not Verified",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text("Logout"),
+                onTap: () async {
+                  try {
+                    final resp = await dio.post("/logout");
+
+                    print(resp.statusCode);
+                    if (resp.statusCode == 204) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LoginScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Logout failed: ${resp.statusCode}",
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error logging out: $e"),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
         ),
-        ListTile(
-          leading: const Icon(Icons.logout),
-          title: const Text("Logout"),
-          onTap: () async {
-            try {
-              final resp = await dio.post("/logout");
-
-              print(resp.statusCode);
-              if (resp.statusCode == 204) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoginScreen(),
-                  ),
-                  (route) => false,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Logout failed: ${resp.statusCode}",
-                    ),
-                  ),
-                );
-              }
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Error logging out: $e"),
-                ),
-              );
-            }
-          },
-        ),
-      ],
-    ),
-  ),
-),
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -178,8 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // Top bar
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(
                   children: [
                     Builder(
@@ -258,8 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           children: [
                             TileLayer(
-                              urlTemplate:
-                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                               subdomains: const ['a', 'b', 'c'],
                               userAgentPackageName: 'com.example.mobile',
                             ),
@@ -313,8 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 heroTag: 'zoomIn',
                                 backgroundColor: Colors.white,
                                 onPressed: () {
-                                  final currentZoom =
-                                      _mapController.camera.zoom;
+                                  final currentZoom = _mapController.camera.zoom;
                                   _mapController.move(
                                     _mapController.camera.center,
                                     currentZoom + 1,
@@ -331,8 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 heroTag: 'zoomOut',
                                 backgroundColor: Colors.white,
                                 onPressed: () {
-                                  final currentZoom =
-                                      _mapController.camera.zoom;
+                                  final currentZoom = _mapController.camera.zoom;
                                   _mapController.move(
                                     _mapController.camera.center,
                                     currentZoom - 1,
