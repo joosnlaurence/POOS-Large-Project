@@ -77,49 +77,55 @@ const ChangePassword = () => {
   }
 
   return (
-    <div className="changePassword__wrap">
-      <h1 className="changePassword__title">Change Password</h1>
-      <p className="changePassword__subtitle">Enter your new password</p>
-
-      <div className="changePassword__form">
-        <div className="changePassword__field">
-          <label className="changePassword__label">New Password</label>
-          <input
-            type="password"
-            className="changePassword__input"
-            placeholder="Enter new password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+    <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+        <div className="main-container card shadow-lg p-4 mx-auto">
+            <h1>Change Password</h1>
+            <p>Enter your new password</p>
         </div>
-
-        <div className="changePassword__field">
-          <label className="changePassword__label">Confirm Password</label>
-          <input
-            type="password"
-            className="changePassword__input"
-            placeholder="Re-enter new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleReset()}
-          />
-        </div>
-      </div>
-
-      {msg && (
-        <div className={`changePassword__message changePassword__message--${msgType}`}>
-          {msg}
-        </div>
-      )}
-
-      <button 
-        className="changePassword__btn" 
-        onClick={handleReset} 
-        disabled={loading}
-      >
-        {loading ? "Resetting..." : "Reset Password"}
-      </button>
     </div>
+    // <div className="changePassword__wrap">
+    //   <h1 className="changePassword__title">Change Password</h1>
+    //   <p className="changePassword__subtitle">Enter your new password</p>
+
+    //   <div className="changePassword__form">
+    //     <div className="changePassword__field">
+    //       <label className="changePassword__label">New Password</label>
+    //       <input
+    //         type="password"
+    //         className="changePassword__input"
+    //         placeholder="Enter new password"
+    //         value={newPassword}
+    //         onChange={(e) => setNewPassword(e.target.value)}
+    //       />
+    //     </div>
+
+    //     <div className="changePassword__field">
+    //       <label className="changePassword__label">Confirm Password</label>
+    //       <input
+    //         type="password"
+    //         className="changePassword__input"
+    //         placeholder="Re-enter new password"
+    //         value={confirmPassword}
+    //         onChange={(e) => setConfirmPassword(e.target.value)}
+    //         onKeyDown={(e) => e.key === "Enter" && handleReset()}
+    //       />
+    //     </div>
+    //   </div>
+
+    //   {msg && (
+    //     <div className={`changePassword__message changePassword__message--${msgType}`}>
+    //       {msg}
+    //     </div>
+    //   )}
+
+    //   <button 
+    //     className="changePassword__btn" 
+    //     onClick={handleReset} 
+    //     disabled={loading}
+    //   >
+    //     {loading ? "Resetting..." : "Reset Password"}
+    //   </button>
+    // </div>
   );
 };
 
