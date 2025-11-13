@@ -55,6 +55,7 @@ export async function setupDatabase() {
         console.log("MONGO_URI found, connecting to database");
         const client = new MongoClient(mongo_uri);
         await client.connect();
+        console.log("connected to database");
         db = client.db('large-proj-data');
         const secondsInDay = 24 * 60 * 60;
 

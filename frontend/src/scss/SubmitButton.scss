@@ -1,0 +1,12 @@
+@import './global.scss';
+
+.submit-btn {
+    background-color: $button-color !important;
+    color: white !important;
+    text-shadow: 1px 1px 3px #323232;
+}
+
+.submit-btn:hover {
+    background-color: $button-color-hover !important;
+    color: #d0cfcf !important;
+}
