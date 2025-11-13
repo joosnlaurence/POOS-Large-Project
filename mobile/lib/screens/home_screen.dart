@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text("Logout"),
                 onTap: () async {
                   try {
-                    final resp = await dio.post("/logout");
+                    final resp = await dio.post("users/logout");
 
                     print(resp.statusCode);
                     if (resp.statusCode == 204) {

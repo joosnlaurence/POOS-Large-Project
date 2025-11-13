@@ -1,14 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final dio = Dio(BaseOptions(
-  baseUrl: "https://4lokofridays.com/api/users",
-  headers: {"Content-Type": "application/json", "Accept": "application/json"},
-));
+final storage = FlutterSecureStorage();
 
-final cookieJar = CookieJar();
+final dio = Dio(
+  BaseOptions(
+    baseUrl: "https://4lokofridays.com/api/",
+    headers: {"Content-Type": "application/json", "Accept": "application/json"},
+  ),
+);
 
 void setupDio() {
-  dio.interceptors.add(CookieManager(cookieJar));
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await storage.read(key: "accessToken");
+
+        if (token != null) {
+          options.headers["Authorization"] = "Bearer $token";
+        }
+
+        return handler.next(options);
+      },
+    ),
+  );
 }
