@@ -182,7 +182,7 @@ Future<void> fetchFountains() async {
                 ),
               ),
 
-              // Map of the building area
+// Map of the building area
 Expanded(
   child: Container(
     margin: const EdgeInsets.all(16),
@@ -203,58 +203,99 @@ Expanded(
     ),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: FlutterMap(
-        mapController: _mapController,  // Add controller
-        options: MapOptions(
-          initialCenter: selectedFountainLocation ?? _getBuildingCoordinates(widget.buildingName),
-          initialZoom: 19.0,
-          minZoom: 18.0,  // Allow zoom out
-          maxZoom: 20.0,  // Allow zoom in
-          interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.all,  // Enable interaction
-          ),
-        ),
+      child: Stack(  // Wrap in Stack
         children: [
-          TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            subdomains: const ['a', 'b', 'c'],
-            userAgentPackageName: 'com.example.mobile',
-          ),
-          MarkerLayer(
-            markers: [
-              // Building marker (red)
-              Marker(
-                point: _getBuildingCoordinates(widget.buildingName),
-                width: 40,
-                height: 40,
-                child: const Icon(
-                  Icons.location_pin,
-                  color: Colors.red,
-                  size: 40,
-                ),
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: selectedFountainLocation ?? _getBuildingCoordinates(widget.buildingName),
+              initialZoom: 19.0,
+              minZoom: 18.0,
+              maxZoom: 20.0,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
               ),
-              // Fountain markers (blue water drops)
-              ...fountains.map((fountain) {
-                final coords = fountain['location']?['coordinates'];
-                if (coords != null) {
-                  final lat = coords['latitude'];
-                  final lng = coords['longitude'];
-                  if (lat != null && lng != null) {
-                    return Marker(
-                      point: LatLng(lat.toDouble(), lng.toDouble()),
-                      width: 30,
-                      height: 30,
-                      child: const Icon(
-                        Icons.water_drop,
-                        color: Colors.blue,
-                        size: 30,
-                      ),
-                    );
-                  }
-                }
-                return null;
-              }).whereType<Marker>().toList(),
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: const ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.mobile',
+              ),
+              MarkerLayer(
+                markers: [
+                  // Building marker (red)
+                  Marker(
+                    point: _getBuildingCoordinates(widget.buildingName),
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.location_pin,
+                      color: Colors.red,
+                      size: 40,
+                    ),
+                  ),
+                  // Fountain markers (blue water drops)
+                  ...fountains.map((fountain) {
+                    final coords = fountain['location']?['coordinates'];
+                    if (coords != null) {
+                      final lat = coords['latitude'];
+                      final lng = coords['longitude'];
+                      if (lat != null && lng != null) {
+                        return Marker(
+                          point: LatLng(lat.toDouble(), lng.toDouble()),
+                          width: 30,
+                          height: 30,
+                          child: const Icon(
+                            Icons.water_drop,
+                            color: Colors.blue,
+                            size: 30,
+                          ),
+                        );
+                      }
+                    }
+                    return null;
+                  }).whereType<Marker>().toList(),
+                ],
+              ),
             ],
+          ),
+          
+          // Zoom buttons
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  mini: true,
+                  heroTag: 'buildingZoomIn',
+                  backgroundColor: Colors.white,
+                  onPressed: () {
+                    final currentZoom = _mapController.camera.zoom;
+                    _mapController.move(
+                      _mapController.camera.center,
+                      currentZoom + 1,
+                    );
+                  },
+                  child: const Icon(Icons.add, color: Colors.black),
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton(
+                  mini: true,
+                  heroTag: 'buildingZoomOut',
+                  backgroundColor: Colors.white,
+                  onPressed: () {
+                    final currentZoom = _mapController.camera.zoom;
+                    _mapController.move(
+                      _mapController.camera.center,
+                      currentZoom - 1,
+                    );
+                  },
+                  child: const Icon(Icons.remove, color: Colors.black),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -302,27 +343,27 @@ Expanded(
       ),
       const Divider(height: 1),
       
-      // Scrollable fountain list
-      Expanded(
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : fountains.isEmpty
-                ? const Center(child: Text("No water fountains found in this building"))
-                : ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    children: fountains.map((fountain) {
-                      return _buildFountainItem(
-                        fountain['_id'].toString(),
-                        _getFountainName(fountain),
-                        _getColorFromFilter(fountain['filter']),
-                        context,
-                      );
-                    }).toList(),
-                  ),
-      ),
-    ],
-  ),
-),
+        // Scrollable fountain list
+        Expanded(
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : fountains.isEmpty
+                  ? const Center(child: Text("No water fountains found in this building"))
+                  : ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      children: fountains.map((fountain) {
+                        return _buildFountainItem(
+                          fountain['_id'].toString(),
+                          _getFountainName(fountain),
+                          _getColorFromFilter(fountain['filter']),
+                          context,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
