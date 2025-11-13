@@ -4,6 +4,6 @@ export type Fountain = {
     fountainLocation: [number, number];
     fountainDescription: string;
     filterStatus: string;
-    floor: string;
+    floor: number;
     imageUrl: string;
 }

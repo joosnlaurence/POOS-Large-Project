@@ -41,6 +41,32 @@ function AutoLocationMarker()
     );
 }
 
+function FountainMarker({ fountain, selected }: { fountain: Fountain; selected: boolean })
+{
+    const markerRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (selected && markerRef.current) {
+            markerRef.current.openPopup();
+        }
+    }, [selected]);
+
+    return (
+        <Marker position={fountain.fountainLocation} ref={markerRef}>
+            <Popup>
+                <div>
+                    {fountain.name}
+                    <img src={fountain.imageUrl} alt="Fountain" className="fountain-image"/>
+                </div>
+
+
+            </Popup>
+        </Marker>
+    );
+}
+
+
+
 function HomeUI() {
     const mapRef = useRef(null);
     const centerLocation: [number, number] = [28.602348, -81.200227];
@@ -107,11 +133,18 @@ function HomeUI() {
                     />
                 ))}
 
-                {selectedFountain && (
-                    <Marker position={selectedFountain.fountainLocation}>
-                        <Popup>{selectedFountain.name}</Popup>
-                    </Marker>
-                )}
+                
+                {fountains.map((fountain) => (
+                    selectedFountain?.id === fountain.id ? (
+                        <FountainMarker
+                            key={fountain.id}
+                            fountain={fountain}
+                            selected={true}
+                        />
+                    ) : null
+                ))}
+
+
             </MapContainer>
 
             {selectedBuilding && (

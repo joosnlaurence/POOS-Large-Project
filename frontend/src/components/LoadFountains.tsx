@@ -30,9 +30,9 @@ async function LoadFountains(fountainIds: string[]): Promise<Fountain[]> {
                     ],
                     fountainDescription: f.location.description,
                     filterStatus: f.filter,
-                    name: f.location.building + " Fountain " + (i + 1),
-                    floor: "",
-                    imageUrl: ""
+                    name: f.location.building + " " + (f.floor == 1 ? "1st" : f.floor == 2 ? "2nd" : f.floor == 3 ? "3rd" : f.floor + "th") + " Floor " + " Fountain " + (i + 1),
+                    floor: f.floor,
+                    imageUrl: f.imgUrl
                 };
                 fountains.push(cleanedFountain);
             }

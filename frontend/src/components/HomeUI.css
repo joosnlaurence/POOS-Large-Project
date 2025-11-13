@@ -77,3 +77,11 @@
 .fountain-button:hover {
     background-color: #dfe3e6;
 }
+
+.fountain-image {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 5px;
+  border-radius: 4px; /* optional: rounded corners */
+}
