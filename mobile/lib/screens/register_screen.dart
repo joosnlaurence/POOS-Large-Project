@@ -54,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Registration failed: ${resp.body}")),
+          SnackBar(content: Text("Registration failed: ${resp.data}")),
         );
       }
     } catch (err) {
