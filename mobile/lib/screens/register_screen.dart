@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import 'home_screen.dart';
+import '../api/network.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -26,16 +27,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _password.text.trim();
 
     try {
-      final resp = await http.post(
-        Uri.parse("https://4lokofridays.com/api/users/register"),
-        headers: {"Content-Type": "application/json", "Accept": "application/json"},
-        body: jsonEncode({
+      final resp = await dio.post(
+        "/register",  // Using dio now
+        data: {
           "firstName": firstName,
           "lastName": lastName,
           "user": username,
           "email": email,
           "password": password,
-        }),
+        },
       );
 
       if (resp.statusCode == 201 || resp.statusCode == 200) {
