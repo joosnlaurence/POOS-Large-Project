@@ -4,15 +4,18 @@ import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'fountain_detail_screen.dart';
+import '../models/user.dart';
 
 class BuildingDetailScreen extends StatefulWidget {
   final String buildingName;
   final String buildingId;
+  final User user;
 
   const BuildingDetailScreen({
     super.key,
     required this.buildingName,
     required this.buildingId,
+    required this.user,
   });
 
   @override
