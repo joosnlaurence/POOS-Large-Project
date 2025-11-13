@@ -28,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final resp = await dio.post(
-        "/register",  // Using dio now
+        "users/register",  // Using dio now
         data: {
           "firstName": firstName,
           "lastName": lastName,

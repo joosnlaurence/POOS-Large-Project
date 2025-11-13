@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../api/network.dart';
 
 class FountainDetailScreen extends StatefulWidget {
   final String fountainId;
@@ -37,23 +38,22 @@ class _FountainDetailScreenState extends State<FountainDetailScreen> {
     }
 
     setState(() => isSubmitting = true);
-
+    print(widget.fountainId);
+    print(selectedFilterColor);
     try {
-      final response = await http.post(
-        Uri.parse('https://4lokofridays.com/api/votes/add'),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
+      final response = await dio.post(
+        'votes/add',
+        data: {
           "fountainId": widget.fountainId,
           "rating": selectedFilterColor!.toLowerCase(),
-        }),
+        },
       );
+      print(response.statusCode);
 
       setState(() => isSubmitting = false);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         if (data['success'] == true) {
           if (!mounted) return;
           
