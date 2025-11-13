@@ -340,6 +340,7 @@ Widget _buildFountainItem(String fountainId, String name, Color color, BuildCont
       // Find the fountain to get its description
       final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
       final description = fountain['location']?['description'] ?? '';
+      final imageUrl = fountain['imgUrl'] ?? '';
       
       Navigator.push(
         context,
@@ -350,6 +351,7 @@ Widget _buildFountainItem(String fountainId, String name, Color color, BuildCont
             buildingName: widget.buildingName,
             filterStatus: _getStatusFromColor(color),
             fountainDescription: description,
+            imageUrl: imageUrl,
           ),
         ),
       );
