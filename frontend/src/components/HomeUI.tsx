@@ -62,13 +62,28 @@ function FountainMarker({ fountain, selected }: { fountain: Fountain; selected: 
 
     return (
         <Marker position={fountain.fountainLocation} ref={markerRef}>
-            <Popup>
-                <div>
-                    {fountain.name}
-                    <img src={fountain.imageUrl} alt="Fountain" className="fountain-image"/>
+            <Popup maxWidth={380} className="fountain-popup">
+                <div className="fountain-popup-div">
+                    <div className="popup-left">
+                        <p><strong>Floor:</strong> {(fountain.floor == 1 ? "1st" : fountain.floor == 2 ? "2nd" : fountain.floor == 3 ? "3rd" : fountain.floor + "th")}</p>
+                        <p><strong>Description:</strong><br/>{fountain.fountainDescription}</p>
+                        <p><strong>Filter Status:</strong><br/><span className={`status-circle ${fountain.filterStatus}`}></span> {fountain.filterStatus}</p>
+                    </div>
+
+                    <div className="popup-right">
+                        <img src={fountain.imageUrl} alt="Fountain" className="fountain-image" />
+                    </div>
+
+                    <div className="popup-bottom">
+                        <select className="filter-select">
+                            <option value="none">Select Status Color</option>
+                            <option value="green">Green</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="red">Red</option>
+                        </select>
+                        <button className="submit-button">Submit</button>
+                    </div>
                 </div>
-
-
             </Popup>
         </Marker>
     );
@@ -85,6 +100,10 @@ function HomeUI() {
     const [fountains, setFountains] = useState<Fountain[]>([]);
     const [showBuildings, setShowBuildings] = useState(true);
     const [selectedFountain, setSelectedFountain] = useState<Fountain | null>(null);
+    const bounds: L.LatLngBoundsExpression = [
+        [28.585046774053048, -81.20933419132147], // southwest corner
+        [28.611871821522072, -81.18538756991485], // northeast corner
+    ];
     
 
     async function handleSetSelectedBuilding(b: Building | null)
@@ -101,13 +120,13 @@ function HomeUI() {
         {
             
             const map = mapRef.current;
+            setShowBuildings(false);
+            const loadedFountains = await LoadFountains(b.fountainIds);
+            setFountains(loadedFountains);
             if (map && "flyTo" in map)
             {
                 (map as any).flyTo(b.buildingLocation, 19);
             }
-            setShowBuildings(false);
-            const loadedFountains = await LoadFountains(b.fountainIds);
-            setFountains(loadedFountains);
         }
     }
 
@@ -117,13 +136,16 @@ function HomeUI() {
         const map = mapRef.current;
         if (map && "flyTo" in map)
         {
-            (map as any).flyTo(fountain.fountainLocation, 19);
+            const offsetLat = 0.0004; // move marker slightly up
+            const offsetLng = 0.00025; // move marker slightly right (adjust as needed)
+            const [lat, lng] = fountain.fountainLocation;
+            (map as any).flyTo([lat + offsetLat, lng + offsetLng], 19);
         }
     }
 
     return (
         <div className="home-container">
-            <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }}>
+            <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
                 <TileLayer
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

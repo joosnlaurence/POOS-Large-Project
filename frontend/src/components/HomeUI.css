@@ -5,12 +5,17 @@
 }
 
 .info-panel {
+    display: flex;
+    flex-direction: column;
     width: 300px;
-    background-color: #f9f9f9;
-    color: black;
+    background-color: #FEF7FF;
     padding: 10px;
     border-left: 1px solid #ccc;
-    overflow-y: auto;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: black;
+
     position: relative;
 }
 
@@ -26,12 +31,15 @@
 }
 
 .fountain-list {
-    max-height: 200px; /* adjust height as needed */
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    flex: 1;                  /* fill remaining vertical space */
+    overflow-y: auto;         /* scroll if needed */
     padding: 5px;
-    background-color: #fff;
+    background-color: #FEF7FF;
+    border-top: 2px solid #ccc;     /* top border */
+    border-bottom: 2px solid #ccc;  /* bottom border */
+    border-left: none;
+    border-right: none;
+    border-radius: 0;               /* no rounding */
 }
 
 .fountain-item {
@@ -63,19 +71,27 @@
 .fountain-button {
     display: block;
     width: 100%;
-    background-color: #e9ecef;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 8px;
-    margin-bottom: 5px;
+    background-color: #00BCD4;   /* same as submit button */
+    color: white;                /* text color */
+    border: 1px solid #0097A7;  /* slightly darker border like submit button */
+    border-radius: 8px;          /* match submit button */
+    padding: 8px 16px;           /* match submit button padding */
+    font-size: 16px;             /* same as submit button */
+    font-weight: 500;            /* same as submit button */
     text-align: left;
     cursor: pointer;
-    font-size: 0.95em;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 5px;
 }
 
+/* Hover effect */
 .fountain-button:hover {
-    background-color: #dfe3e6;
+    background-color: #00ACC1;   /* same hover as submit button */
+}
+
+/* Click / active effect */
+.fountain-button:active {
+    transform: scale(0.97);
 }
 
 .fountain-image {
@@ -105,4 +121,112 @@
 
 .status-circle.red {
   background-color: red;
+}
+
+.fountain-popup-div {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr; /* make the image side bigger */
+    grid-template-rows: auto auto;
+    gap: 10px;
+    width: 350px; /* slightly larger popup */
+    max-width: 260px;
+}
+
+.popup-left {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9em;
+    justify-content: center;
+}
+
+.popup-right {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fountain-image {
+    width: 100%;
+    height: 150px; /* was 120px before */
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.popup-bottom {
+    grid-column: 1 / span 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.filter-select {
+    flex: 1;
+    margin-right: 8px;
+    padding: 8px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-select:hover {
+    border-color: #00BCD4; /* subtle highlight on hover */
+}
+
+.filter-select:focus {
+    border-color: #00BCD4;
+    box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+}
+
+.submit-button {
+    background-color: #00BCD4; /* Turquoise / Cyan color */
+    color: white;
+    border: 1px solid #0097A7; /* Slightly darker border */
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Add a hover and click effect for polish */
+.submit-button:hover {
+    background-color: #00ACC1;
+}
+
+.submit-button:active {
+    transform: scale(0.97);
+}
+
+/* Target the wrapper and tip *inside* any popup that has .fountain-popup */
+.fountain-popup .leaflet-popup-content-wrapper {
+    background-color: #FEF7FF !important;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.fountain-popup .leaflet-popup-tip {
+    background-color: #FEF7FF !important;
+}
+
+.fountain-popup .leaflet-popup-content {
+    font-size: 16px; /* increase this to 17–18px if you want it larger */
+    line-height: 1.4;
+}
+
+.custom-map {
+    border: 4px solid #8D3C05;  /* your brown color */
+    border-radius: 20px;         /* adjust roundness */
+    overflow: hidden;            /* ensures map content respects the border-radius */
 }
