@@ -1,5 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
+import LoadBuildings from './LoadBuildings';
+import LoadFountains from './LoadFountains';
+import type { Building } from '../types/Building';
+import type { Fountain } from '../types/Fountain';
+import './HomeUI.css';
+import L from 'leaflet';
+import locationImg from '../assets/Location.png';
+
+const userLocationIcon = L.icon({
+    iconUrl: locationImg,
+    iconSize: [30, 30],       
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -25],
+});
+
 
 function AutoLocationMarker()
 {
@@ -29,48 +44,145 @@ function AutoLocationMarker()
     }, [map]);
 
     return position === null ? null : (
-        <Marker position={position}>
+        <Marker position={position} icon={userLocationIcon}>
             <Popup>You are here</Popup>
         </Marker>
     );
 }
 
-function HomeUI()
+function FountainMarker({ fountain, selected }: { fountain: Fountain; selected: boolean })
 {
+    const markerRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (selected && markerRef.current) {
+            markerRef.current.openPopup();
+        }
+    }, [selected]);
+
+    return (
+        <Marker position={fountain.fountainLocation} ref={markerRef}>
+            <Popup>
+                <div>
+                    {fountain.name}
+                    <img src={fountain.imageUrl} alt="Fountain" className="fountain-image"/>
+                </div>
+
+
+            </Popup>
+        </Marker>
+    );
+}
+
+
+
+function HomeUI() {
     const mapRef = useRef(null);
     const centerLocation: [number, number] = [28.602348, -81.200227];
-    const centerLocation2: [number, number] = [28.600484146464797, -81.20139027355133];
-    const centerLocation3: [number, number] = [28.6020736, -81.1986191];
 
-    return(
-        //IMPORTANT ALSO TO SET A SIZE OF THE MAP OR ELSE IT ALSO WON'T RENDER
-        <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{height: "75vh", width: "63.5vw"}}>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+    const buildings = LoadBuildings();
+    const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+    const [fountains, setFountains] = useState<Fountain[]>([]);
+    const [showBuildings, setShowBuildings] = useState(true);
+    const [selectedFountain, setSelectedFountain] = useState<Fountain | null>(null);
+    
 
-            <Marker position={centerLocation2}>
-                <Popup>
-                    <div>
-                        A pretty CSS3 popup. <br /> Library.
-                        <button>TEST</button>
+    async function handleSetSelectedBuilding(b: Building | null)
+    {
+        setSelectedBuilding(b);
+        setSelectedFountain(null);
 
+        if (b === null)
+        {
+            setFountains([]);
+            setShowBuildings(true);
+        }
+        else
+        {
+            
+            const map = mapRef.current;
+            if (map && "flyTo" in map)
+            {
+                (map as any).flyTo(b.buildingLocation, 19);
+            }
+            setShowBuildings(false);
+            const loadedFountains = await LoadFountains(b.fountainIds);
+            setFountains(loadedFountains);
+        }
+    }
+
+    function handleSelectFountain(fountain: Fountain)
+    {
+        setSelectedFountain(fountain);
+        const map = mapRef.current;
+        if (map && "flyTo" in map)
+        {
+            (map as any).flyTo(fountain.fountainLocation, 19);
+        }
+    }
+
+    return (
+        <div className="home-container">
+            <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }}>
+                <TileLayer
+                    attribution='&copy; OpenStreetMap contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    maxZoom={19}
+                />
+
+                <AutoLocationMarker />
+
+                {showBuildings && buildings.map((b) => (
+                    <Marker
+                        key={b.id}
+                        position={b.buildingLocation}
+                        eventHandlers={{
+                            click: () => handleSetSelectedBuilding(b),
+                        }}
+                    />
+                ))}
+
+                
+                {fountains.map((fountain) => (
+                    selectedFountain?.id === fountain.id ? (
+                        <FountainMarker
+                            key={fountain.id}
+                            fountain={fountain}
+                            selected={true}
+                        />
+                    ) : null
+                ))}
+
+
+            </MapContainer>
+
+            {selectedBuilding && (
+                <div className="info-panel">
+                    <button onClick={() => handleSetSelectedBuilding(null)} className="close-button">✕</button>
+
+                    <h2>{selectedBuilding.name}</h2>
+
+                    <h3>Fountains</h3>
+
+                    <div className="fountain-list">
+                        {fountains.length === 0 ? (
+                            <p className="no-fountains">No fountains found.</p>
+                        ) : (
+                            fountains.map((fountain) => (
+                                <button
+                                    key={fountain.id}
+                                    className="fountain-button"
+                                    onClick={() => handleSelectFountain(fountain)}
+                                >
+                                    <span className={`status-circle ${fountain.filterStatus}`}></span>
+                                    {fountain.name}
+                                </button>
+                            ))
+                        )}
                     </div>
-                </Popup>
-            </Marker>
-
-            <Marker position={centerLocation3}>
-                <Popup>
-                    <div>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                        <button>TEST</button>
-
-                    </div>
-                </Popup>
-            </Marker>
-            <AutoLocationMarker />
-        </MapContainer>
+                </div>
+            )}
+        </div>
     );
 }
 
