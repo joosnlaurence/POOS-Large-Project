@@ -167,30 +167,35 @@ class _FountainDetailScreenState extends State<FountainDetailScreen> {
                 ),
 
                 // Details Box
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Location",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        widget.buildingName,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      const Text(
-                        "Current Filter Status",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+Container(
+  margin: const EdgeInsets.all(16),
+  padding: const EdgeInsets.all(20),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Location",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      Text(
+        widget.buildingName,
+        style: const TextStyle(color: Colors.grey),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        widget.fountainDescription,  // Add description here
+        style: const TextStyle(color: Colors.grey, fontSize: 14),
+      ),
+      const SizedBox(height: 16),
+      
+      const Text(
+        "Current Filter Status",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
                       Text(
                         widget.filterStatus,
                         style: TextStyle(
