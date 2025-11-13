@@ -7,6 +7,7 @@ class FountainDetailScreen extends StatefulWidget {
   final String fountainName;
   final String buildingName;
   final String filterStatus;
+  final String fountainDescription;
 
   const FountainDetailScreen({
     super.key,
@@ -14,6 +15,7 @@ class FountainDetailScreen extends StatefulWidget {
     required this.fountainName,
     required this.buildingName,
     required this.filterStatus,
+    required this.fountainDescription,
   });
 
   @override
