@@ -5,6 +5,15 @@ import LoadFountains from './LoadFountains';
 import type { Building } from '../types/Building';
 import type { Fountain } from '../types/Fountain';
 import './HomeUI.css';
+import L from 'leaflet';
+import locationImg from '../assets/Location.png';
+
+const userLocationIcon = L.icon({
+    iconUrl: locationImg,
+    iconSize: [30, 30],       
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -25],
+});
 
 
 function AutoLocationMarker()
@@ -35,7 +44,7 @@ function AutoLocationMarker()
     }, [map]);
 
     return position === null ? null : (
-        <Marker position={position}>
+        <Marker position={position} icon={userLocationIcon}>
             <Popup>You are here</Popup>
         </Marker>
     );
@@ -165,6 +174,7 @@ function HomeUI() {
                                     className="fountain-button"
                                     onClick={() => handleSelectFountain(fountain)}
                                 >
+                                    <span className={`status-circle ${fountain.filterStatus}`}></span>
                                     {fountain.name}
                                 </button>
                             ))
