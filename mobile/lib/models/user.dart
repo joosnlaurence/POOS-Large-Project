@@ -4,7 +4,6 @@ class User {
   final String username;
   final String email;
   final String token;
-  final bool isVerified;
 
   User({
     required this.firstName,
@@ -12,7 +11,6 @@ class User {
     required this.username,
     required this.email,
     required this.token,
-    required this.isVerified,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -22,7 +20,6 @@ class User {
       username: json['user'] ?? json['username'] ?? '',
       email: json['email'] ?? '',
       token: json['token'] ?? '',
-      isVerified: json['isVerified'] ?? false,
     );
   }
 }
