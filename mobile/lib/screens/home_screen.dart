@@ -33,23 +33,28 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       "name": "Business Administration I",
       "buildingId": "690baf85708feb38509bf882",
-      "position": LatLng(28.601167, -81.199083),
+      "position": LatLng(28.60102222355002, -81.19911763783486),
     },
     {
       "name": "Business Administration II",
       "buildingId": "69128dc862f1038ba9f47719",
-      "position": LatLng(28.600917, -81.198583),
+      "position": LatLng(28.600830191133735, -81.19872311456027),
     },
     {
       "name": "Engineering I",
       "buildingId": "69128d4c62f1038ba9f47718",
-      "position": LatLng(28.601478, -81.198306),
+      "position": LatLng(28.601436313209327, -81.19837034556215),
     },
     {
       "name": "Engineering II",
       "buildingId": "690bad27708feb38509bf880",
-      "position": LatLng(28.602035, -81.198334),
+      "position": LatLng(28.60190206587284, -81.19843927581007),
     },
+    {
+    "name": "L3Harris Engineering Center",
+    "buildingId": "6915748bd8f8aa6afbf5aa3b",
+    "position": LatLng(28.600635061589994, -81.19764841593208),  
+  },
   ];
 
   @override
@@ -275,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           mapController: _mapController,
                           options: MapOptions(
                             initialCenter: centerLocation,
-                            initialZoom: 17.0,
+                            initialZoom: 16.5,
                             minZoom: 16.0,
                             maxZoom: 19.0,
                             cameraConstraint: CameraConstraint.contain(
