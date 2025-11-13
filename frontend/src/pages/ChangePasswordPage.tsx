@@ -6,7 +6,7 @@ import "../scss/ChangePassword.scss";
 import { WheresMyWaterTitle } from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
-import { resetPassword, validateNewPassword } from "../utils/passwordResetUtils.ts";
+import { resetPassword, checkNewPassword } from "../utils/passwordResetUtils.ts";
 
 const ChangePasswordPage = () => {
     const [searchParams] = useSearchParams();
@@ -28,7 +28,7 @@ const ChangePasswordPage = () => {
     async function handleReset() {
         setMsg("");
 
-        const validate = validateNewPassword(newPassword, confirmPassword);
+        const validate = checkNewPassword(newPassword, confirmPassword);
         if(!validate.valid){
             setMsg(validate.msg);
             setSuccess(false);
@@ -93,7 +93,7 @@ const ChangePasswordPage = () => {
                     defaultMsg="Reset Password"
                 />
 
-                <Link to="/login" className="link-light link-underline-opacity-0 link-underline-opacity-75-hover">
+                <Link to="/login" className="link-light link">
                     Return to Login
                 </Link>
             </div>

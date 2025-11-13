@@ -60,7 +60,7 @@ export async function sendResetLink(email: string): Promise<ApiResponse> {
     return {success, msg};
 }
 
-export function validateNewPassword(newPassword: string, confirmPassword: string): ValidateResponse {
+export function checkNewPassword(newPassword: string, confirmPassword: string): ValidateResponse {
     let msg: string;
     let valid: boolean;
 
