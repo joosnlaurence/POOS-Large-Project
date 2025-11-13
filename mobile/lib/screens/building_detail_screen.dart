@@ -335,51 +335,62 @@ Future<void> fetchFountains() async {
   }
 
 Widget _buildFountainItem(String fountainId, String name, Color color, BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      // Find the fountain to get its description
-      final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
-      final description = fountain['location']?['description'] ?? '';
-      final imageUrl = fountain['imgUrl'] ?? '';
-      
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => FountainDetailScreen(
-            fountainId: fountainId,
-            fountainName: name,
-            buildingName: widget.buildingName,
-            filterStatus: _getStatusFromColor(color),
-            fountainDescription: description,
-            imageUrl: imageUrl,
+  return Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade50,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey.shade300, width: 1),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.circle, color: color, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            name,
+            style: const TextStyle(fontSize: 14),
           ),
         ),
-      );
-    },
-    child: Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.circle, color: color, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              name,
-              style: const TextStyle(fontSize: 14),
+        const SizedBox(width: 8),
+        // Make this a separate button
+        ElevatedButton(
+          onPressed: () {
+            // Navigate to detail screen
+            final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
+            final description = fountain['location']?['description'] ?? '';
+            final imageUrl = fountain['imgUrl'] ?? '';
+            
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => FountainDetailScreen(
+                  fountainId: fountainId,
+                  fountainName: name,
+                  buildingName: widget.buildingName,
+                  filterStatus: _getStatusFromColor(color),
+                  fountainDescription: description,
+                  imageUrl: imageUrl,
+                ),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightBlue.shade100,
+            foregroundColor: Colors.blue.shade900,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
-          const Text(
-            "Select for More Details",
-            style: TextStyle(fontSize: 11, color: Colors.grey),
+          child: const Text(
+            "More Details",
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }
