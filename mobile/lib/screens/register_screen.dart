@@ -79,16 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 220,
-                child: Image(
-                  image: AssetImage("assets/swampy.png"),
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
             Center(
               child: SingleChildScrollView(
                 child: Container(
@@ -224,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
+                            fontStyle: FontStyle.italic,
                           ),
                         ),
                       )
