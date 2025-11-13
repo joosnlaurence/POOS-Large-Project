@@ -92,4 +92,3 @@ vite.config.ts.timestamp-*
 .secrets
 .vscode
 .idea
-frontend/fountain_images/
