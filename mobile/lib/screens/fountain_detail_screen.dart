@@ -8,6 +8,7 @@ class FountainDetailScreen extends StatefulWidget {
   final String buildingName;
   final String filterStatus;
   final String fountainDescription;
+  final String imageUrl;
 
   const FountainDetailScreen({
     super.key,
@@ -16,6 +17,7 @@ class FountainDetailScreen extends StatefulWidget {
     required this.buildingName,
     required this.filterStatus,
     required this.fountainDescription,
+    required this.imageUrl,
   });
 
   @override
@@ -149,23 +151,48 @@ class _FountainDetailScreenState extends State<FountainDetailScreen> {
                   ),
                 ),
 
-                // Fountain Image Placeholder
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Water Fountain\nImage",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+// Fountain Image
+Container(
+  margin: const EdgeInsets.all(16),
+  height: 300,
+  decoration: BoxDecoration(
+    color: Colors.grey.shade300,
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: widget.imageUrl.isNotEmpty
+      ? ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            widget.imageUrl,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
                 ),
-
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(
+                child: Text(
+                  "Image not available",
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
+            },
+          ),
+        )
+      : const Center(
+          child: Text(
+            "No image available",
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+),
                 // Details Box
 Container(
   margin: const EdgeInsets.all(16),
