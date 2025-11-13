@@ -6,6 +6,7 @@ import '../models/user.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
 import 'forgot_password_screen.dart';
+import '../api/network.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,38 +19,43 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-  Future<void> handleLogin() async {
-    final username = _username.text.trim();
-    final password = _password.text.trim();
+Future<void> handleLogin() async {
+  final username = _username.text.trim();
+  final password = _password.text.trim();
 
-    try {
-      final resp = await http.post(
-        Uri.parse("http://4lokofridays.com/api/users/login"),
-        headers: {"Content-Type": "application/json", "Accept": "application/json"},
-        body: jsonEncode({"ident": username, "password": password}),
+  try {
+    print('=== LOGIN DEBUG ===');
+    print('Username: $username');
+    
+    final resp = await dio.post(
+      "/login",
+      data: {"ident": username, "password": password},
+    );
+
+    print('Response status: ${resp.statusCode}');
+    print('Response data: ${resp.data}');
+
+    if (resp.statusCode == 200 || resp.statusCode == 201) {
+      final data = resp.data;
+      final user = User.fromJson(data);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen(user: user)),
       );
-      print(resp.statusCode);
-
-      if (resp.statusCode == 200 || resp.statusCode == 201) {
-        final data = jsonDecode(resp.body);
-        final user = User.fromJson(data);
-
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => HomeScreen(user: user)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Invalid login")),
-        );
-      }
-    } catch (err) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $err")),
+        const SnackBar(content: Text("Invalid login")),
       );
     }
+  } catch (err) {
+    print('ERROR: $err');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: $err")),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -171,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          decoration: TextDecoration.underline,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
@@ -188,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
