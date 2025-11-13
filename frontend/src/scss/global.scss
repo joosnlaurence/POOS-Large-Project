@@ -11,11 +11,19 @@
     font-style: normal;
 }
 
+.inter {
+    font-family: 'Inter';
+}
+
 @font-face {
     font-family: 'Baloo 2';
     src: url('../assets/fonts/Baloo_2/Baloo2-VariableFont_wght.ttf') format('truetype-variations');
     font-weight: 100 900;
     font-style: normal;
+}
+
+.baloo-2 {
+    font-family: 'Baloo 2';
 }
 
 * {

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../scss/PasswordReset.scss";
 import * as URL from "../url.ts";
-import waterText from '../assets/water.png';
+import { WheresMyWaterTitle } from "./WheresMyWaterTitle.tsx";
+import { FormInput } from "./FormInput.tsx";
+import { SubmitButton } from "./SubmitButton.tsx";
 
 const PasswordReset = () => {
     const [email, setEmail] = useState("");
@@ -11,6 +13,8 @@ const PasswordReset = () => {
     const [sendSuccess, setSendSuccess] = useState(true); 
 
     async function handleSend() {
+        setMsg("");
+
         if (!email.trim()) {
             setMsg("Please enter your email.");
             setSendSuccess(false);
@@ -56,59 +60,30 @@ const PasswordReset = () => {
     return (
         <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
             <div className="main-container card shadow-lg p-4 mx-auto">
-                <div className="text-center mb-4 wheres-my-water inter">
-                    <div>
-                        <span id="wheres">Where's </span><span id="my"> My</span>
-                    </div>
-                    <div>
-                        <img src={waterText} id="water"></img>
-                    </div>
-                </div>
+                <WheresMyWaterTitle></WheresMyWaterTitle>
+
                 <div className="text-center mb-4">
                     <h3 className="text-light">Forgot Your Password?</h3>
                     <p className="text-light">Enter your email to get a link to reset your password</p>
                 </div>
-                <form 
-                    className="mb-4" 
-                    style={{width: "100%"}}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSend();
-                    }}
-                >
-                    <div className="form-floating mb-1" style={{width: "80%"}}>
-                        <input 
-                            type="email" 
-                            className={`form-control ${sendSuccess ? "" : "failure-send"}`} 
-                            id="floatingInputValue" 
-                            placeholder="your@email.com" 
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)} 
-                            onInvalid={(e) => {
-                                e.preventDefault(); 
-                                handleSend();
-                            }}
-                            aria-label="email" 
-                            aria-labelledby="email" 
-                        />
-                        <label htmlFor="floatingInputValue">Email address</label>
-                    </div>
-                    
-                    {msg && (
-                        <div className="status-msg">
-                            <i className={`bi p-2 ${sendSuccess 
-                                ? "bi-check-circle-fill success-text" 
-                                : "bi-exclamation-diamond-fill failure-text"}`}
-                            ></i>
-                            <span className={`fw-medium ${sendSuccess ? "success-text" : "failure-text"}`}>{msg}</span>
-                        </div>
-                    )}
-                </form>
                 
-                <button type="button" className="btn fw-medium mx-auto shadow-lg send-email-btn mb-4" style={{width:"70%"}}
-                        onClick={handleSend} disabled={loading}>
-                    {loading ? "Sending..." : "Send Reset Link"}
-                </button>
+                <FormInput
+                    type="email"
+                    label="Email address"
+                    placeholder="your@email.com"
+                    inputValue={email}
+                    onChange={(e) => setEmail(e.target.value)} 
+                    onSubmit={handleSend}
+                    isSuccess={msg ? sendSuccess : null}
+                    statusMsg={msg}
+                />
+                
+                <SubmitButton
+                    onClick={handleSend}
+                    isDisabled={loading}
+                    disabledMsg="Sending..."
+                    defaultMsg="Send Reset Link"
+                />
 
                 <Link to="/login" className="link-light link-underline-opacity-0 link-underline-opacity-75-hover">
                     Return to Login
