@@ -45,7 +45,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           username: username,
           email: email,
           token: '', // optional if backend doesn't return token
-          isVerified: false,
         );
 
         if (!mounted) return;
