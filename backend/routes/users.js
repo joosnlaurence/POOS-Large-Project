@@ -330,5 +330,26 @@ router.post('/reset-password', async (req, res) => {
   }
 });
     
+router.post('/check-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email required' });
+    }
+
+    const user = await db.collection('users').findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, isVerified: user.isVerified });
+  } catch (err) {
+    console.error('Check verification error:', err);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+});
+    
 return router;
 }
