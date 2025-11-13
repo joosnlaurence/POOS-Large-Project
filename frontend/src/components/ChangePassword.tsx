@@ -12,7 +12,6 @@ const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [msg, setMsg] = useState("");
-    const [msgType, setMsgType] = useState<"success" | "error">("error");
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(true);
     
@@ -21,7 +20,6 @@ const ChangePassword = () => {
     useEffect(() => {
         if (!token) {
         setMsg("Invalid reset link");
-        setMsgType("error");
         }
     }, [token]);
 
@@ -30,14 +28,12 @@ const ChangePassword = () => {
 
         if (!newPassword.trim() || !confirmPassword.trim()) {
         setMsg("Please fill in all fields");
-        setMsgType("error");
         setSuccess(false);
         return;
         }
 
         if (newPassword !== confirmPassword) {
         setMsg("Passwords do not match");
-        setMsgType("error");
         setSuccess(false);
         return;
         }
@@ -55,18 +51,15 @@ const ChangePassword = () => {
 
         if (response.ok && data.success) {
             setMsg("Password reset successfully! Going back to login...");
-            setMsgType("success");
             setSuccess(true);
             setTimeout(() => navigate("/login"), 2000);
         } else {
             setMsg(data.error || "Failed to reset password");
-            setMsgType("error");
             setSuccess(false);
         }
         } catch (err) {
             console.error("Error:", err);
             setMsg("Could not connect to the server");
-            setMsgType("error");
             setSuccess(false);
         } finally {
             setLoading(false);
