@@ -4,7 +4,7 @@ import LoadBuildings from './LoadBuildings';
 import LoadFountains from './LoadFountains';
 import type { Building } from '../types/Building';
 import type { Fountain } from '../types/Fountain';
-import './HomeUI.css';
+import '../scss/HomeUI.scss';
 import L from 'leaflet';
 import locationImg from '../assets/Location.png';
 
