@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "./VerifySuccess.css";
+import "../scss/VerifySuccess.scss";
 
 const VerifySuccess = () => {
   const navigate = useNavigate();

@@ -1,90 +1,96 @@
 import { useState } from "react";
-import "./PasswordReset.css";
-import * as URL from "../url.ts"; // same way you import it in Login.tsx
+import { Link } from "react-router-dom";
+import "../scss/PasswordReset.scss";
+import * as URL from "../url.ts";
+import { WheresMyWaterTitle } from "./WheresMyWaterTitle.tsx";
+import { FormInput } from "./FormInput.tsx";
+import { SubmitButton } from "./SubmitButton.tsx";
 
 const PasswordReset = () => {
-  const [email, setEmail] = useState("");
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState("");
+    const [msg, setMsg] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [sendSuccess, setSendSuccess] = useState(true); 
 
-  async function handleSend() {
-    if (!email.trim()) {
-      setMsg("⚠️ Please enter your email.");
-      return;
-    }
+    async function handleSend() {
+        setMsg("");
 
-    setLoading(true);
-    setMsg("");
+        if (!email.trim()) {
+            setMsg("Please enter your email.");
+            setSendSuccess(false);
+            return;
+        }
+        const emailInput = document.getElementById('floatingInputValue') as HTMLInputElement;
+        if(!emailInput?.checkValidity()) {
+            setMsg('Please enter a valid email address');
+            setSendSuccess(false);
+            return;
+        }
 
-    try {
-      // 👇 Call your backend endpoint
-      const response = await fetch(URL.buildPath("api/users/request-password-reset"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+        setLoading(true);
 
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setMsg("✅ Reset link sent! Check your email.");
-      } else {
-        setMsg(`❌ ${data.error || "Failed to send reset link."}`);
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      setMsg("❌ Could not connect to the server.");
-    } finally {
-      setLoading(false);
-    }
-  }
+        try {
+            const response = await fetch(URL.buildPath("api/users/request-password-reset"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
 
-  return (
-    <div className="resetBody">
-      <div className="headerContainer resetHeaderContainer">
-        <div id="upperResetHead">Lost your treasure?</div>
-        <div id="lowerResetHead">Reset Password</div>
-      </div>
+            const data = await response.json();
+            if (response.ok && data.success) {
+                setMsg("Reset link sent! Check your email.");
+                setSendSuccess(true);
+            } 
+            else {
+                setMsg(`${data.error || "Failed to send reset link."}`);
+                setSendSuccess(false);
+            }
+        } 
+        catch (err) {
+            console.error("Error:", err);
+            setMsg("Could not connect to the server.");
+            setSendSuccess(false);
+        } 
+        finally {
+            setLoading(false);
+        }
+    } 
 
-      <div className="resetInputContainer">
-        <div className="resetInputTitle">
-          <h2>Enter your email to reset your password</h2>
-        </div>
 
-        <div className="resetInputBlock">
-          <label className="resetLabel">
-            Email <span className="requiredSymbol">*</span>
-          </label>
-          <input
-            type="email"
-            className="inputField"
-            placeholder="your@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          />
-          {msg && (
-            <div className={msg.startsWith("✅") ? "successContainer" : "errorContainer"}>
-              {msg}
+    return (
+        <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+            <div className="main-container card shadow-lg p-4 mx-auto">
+                <WheresMyWaterTitle></WheresMyWaterTitle>
+
+                <div className="text-center mb-4">
+                    <h3 className="text-light">Forgot Your Password?</h3>
+                    <p className="text-light">Enter your email to get a link to reset your password</p>
+                </div>
+                
+                <FormInput
+                    type="email"
+                    label="Email address"
+                    placeholder="your@email.com"
+                    inputValue={email}
+                    onChange={(e) => setEmail(e.target.value)} 
+                    onSubmit={handleSend}
+                    isSuccess={msg ? sendSuccess : null}
+                    statusMsg={msg}
+                />
+                
+                <SubmitButton
+                    onClick={handleSend}
+                    isDisabled={loading}
+                    disabledMsg="Sending..."
+                    defaultMsg="Send Reset Link"
+                />
+
+                <Link to="/login" className="link-light link-underline-opacity-0 link-underline-opacity-75-hover">
+                    Return to Login
+                </Link>
             </div>
-          )}
         </div>
-
-        <button className="resetButton" onClick={handleSend} disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-
-        <div className="resetInputBlock returnLogin">
-          <span>Remembered your password?</span>
-          <span
-            id="backToLogin"
-            onClick={() => (window.location.href = "/login")}
-          >
-            {" "}Back to Login
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default PasswordReset;
