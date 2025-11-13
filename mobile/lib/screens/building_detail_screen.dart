@@ -25,6 +25,8 @@ class BuildingDetailScreen extends StatefulWidget {
 class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
   List<Map<String, dynamic>> fountains = [];
   bool isLoading = true;
+  LatLng? selectedFountainLocation;
+  final MapController _mapController = MapController();
 
   @override
   void initState() {
@@ -181,61 +183,84 @@ Future<void> fetchFountains() async {
               ),
 
               // Map of the building area
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.brown.shade700, // or Colors.white / Colors.grey
-                      width: 3,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                        color: Colors.black.withOpacity(0.15),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: FlutterMap(
-                      options: MapOptions(
-                        initialCenter: _getBuildingCoordinates(widget.buildingName),
-                        initialZoom: 19.0,
-                        minZoom: 19.0,
-                        maxZoom: 19.0,
-                        interactionOptions: const InteractionOptions(
-                          flags: InteractiveFlag.none,
-                        ),
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          subdomains: const ['a', 'b', 'c'],
-                          userAgentPackageName: 'com.example.mobile',
-                        ),
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: _getBuildingCoordinates(widget.buildingName),
-                              width: 40,
-                              height: 40,
-                              child: const Icon(
-                                Icons.location_pin,
-                                color: Colors.red,
-                                size: 40,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+Expanded(
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: Colors.brown.shade700, 
+        width: 3,
+      ),
+      boxShadow: [
+        BoxShadow(
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+          color: Colors.black.withOpacity(0.15),
+        ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: FlutterMap(
+        mapController: _mapController,  // Add controller
+        options: MapOptions(
+          initialCenter: selectedFountainLocation ?? _getBuildingCoordinates(widget.buildingName),
+          initialZoom: 19.0,
+          minZoom: 18.0,  // Allow zoom out
+          maxZoom: 20.0,  // Allow zoom in
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.all,  // Enable interaction
+          ),
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            subdomains: const ['a', 'b', 'c'],
+            userAgentPackageName: 'com.example.mobile',
+          ),
+          MarkerLayer(
+            markers: [
+              // Building marker (red)
+              Marker(
+                point: _getBuildingCoordinates(widget.buildingName),
+                width: 40,
+                height: 40,
+                child: const Icon(
+                  Icons.location_pin,
+                  color: Colors.red,
+                  size: 40,
                 ),
               ),
+              // Fountain markers (blue water drops)
+              ...fountains.map((fountain) {
+                final coords = fountain['location']?['coordinates'];
+                if (coords != null) {
+                  final lat = coords['latitude'];
+                  final lng = coords['longitude'];
+                  if (lat != null && lng != null) {
+                    return Marker(
+                      point: LatLng(lat.toDouble(), lng.toDouble()),
+                      width: 30,
+                      height: 30,
+                      child: const Icon(
+                        Icons.water_drop,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                    );
+                  }
+                }
+                return null;
+              }).whereType<Marker>().toList(),
+            ],
+          ),
+        ],
+      ),
+    ),
+  ),
+),
 
               Container(
   margin: const EdgeInsets.all(16),
@@ -335,62 +360,79 @@ Future<void> fetchFountains() async {
   }
 
 Widget _buildFountainItem(String fountainId, String name, Color color, BuildContext context) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.grey.shade50,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.shade300, width: 1),
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.circle, color: color, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            name,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-        const SizedBox(width: 8),
-        // Make this a separate button
-        ElevatedButton(
-          onPressed: () {
-            // Navigate to detail screen
-            final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
-            final description = fountain['location']?['description'] ?? '';
-            final imageUrl = fountain['imgUrl'] ?? '';
-            
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => FountainDetailScreen(
-                  fountainId: fountainId,
-                  fountainName: name,
-                  buildingName: widget.buildingName,
-                  filterStatus: _getStatusFromColor(color),
-                  fountainDescription: description,
-                  imageUrl: imageUrl,
-                ),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.lightBlue.shade100,
-            foregroundColor: Colors.blue.shade900,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+  return GestureDetector(
+    onTap: () {
+      // Find the fountain and zoom to it on the map
+      final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
+      final coords = fountain['location']?['coordinates'];
+      if (coords != null) {
+        final lat = coords['latitude'];
+        final lng = coords['longitude'];
+        if (lat != null && lng != null) {
+          final fountainLocation = LatLng(lat.toDouble(), lng.toDouble());
+          _mapController.move(fountainLocation, 20.0);  // Zoom to fountain
+          setState(() {
+            selectedFountainLocation = fountainLocation;
+          });
+        }
+      }
+    },
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.circle, color: color, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              name,
+              style: const TextStyle(fontSize: 14),
             ),
           ),
-          child: const Text(
-            "More Details",
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              // Navigate to detail screen
+              final fountain = fountains.firstWhere((f) => f['_id'].toString() == fountainId);
+              final description = fountain['location']?['description'] ?? '';
+              final imageUrl = fountain['imgUrl'] ?? '';
+              
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FountainDetailScreen(
+                    fountainId: fountainId,
+                    fountainName: name,
+                    buildingName: widget.buildingName,
+                    filterStatus: _getStatusFromColor(color),
+                    fountainDescription: description,
+                    imageUrl: imageUrl,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightBlue.shade100,
+              foregroundColor: Colors.blue.shade900,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              "More Details",
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
