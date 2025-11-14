@@ -1,0 +1,11 @@
+{
+    "workspaces": [
+        "backend",
+        "frontend"
+    ],
+    "scripts": {
+        "test": "npm test --workspaces",
+        "test:backend": "npm test --workspace=backend",
+        "test:frontend": "npm test --workspace=frontend"
+    }
+}
