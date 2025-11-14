@@ -188,26 +188,26 @@
     box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
 }
 
-.submit-button {
-    background-color: #00BCD4; /* Turquoise / Cyan color */
-    color: white;
-    border: 1px solid #0097A7; /* Slightly darker border */
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
+// .submit-button {
+//     background-color: #00BCD4; /* Turquoise / Cyan color */
+//     color: white;
+//     border: 1px solid #0097A7; /* Slightly darker border */
+//     border-radius: 8px;
+//     padding: 8px 16px;
+//     font-size: 16px;
+//     font-weight: 500;
+//     cursor: pointer;
+//     transition: background-color 0.2s, transform 0.1s;
+// }
 
-/* Add a hover and click effect for polish */
-.submit-button:hover {
-    background-color: #00ACC1;
-}
+// /* Add a hover and click effect for polish */
+// .submit-button:hover {
+//     background-color: #00ACC1;
+// }
 
-.submit-button:active {
-    transform: scale(0.97);
-}
+// .submit-button:active {
+//     transform: scale(0.97);
+// }
 
 /* Target the wrapper and tip *inside* any popup that has .fountain-popup */
 .fountain-popup .leaflet-popup-content-wrapper {

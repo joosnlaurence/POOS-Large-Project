@@ -7,6 +7,7 @@ import { WheresMyWaterTitle } from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
 import { sendResetLink, validateEmail } from "../utils/passwordResetUtils.ts";
+import { PageTransition } from "../components/PageTransition.tsx";
 
 const PasswordResetPage = () => {
     const [email, setEmail] = useState("");
@@ -35,38 +36,41 @@ const PasswordResetPage = () => {
 
 
     return (
-        <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
-            <div className="main-container card shadow-lg p-4 mx-auto">
-                <WheresMyWaterTitle></WheresMyWaterTitle>
+        <PageTransition>
+            <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+                <div className="main-container card shadow-lg p-4 mx-auto">
+                    <WheresMyWaterTitle></WheresMyWaterTitle>
 
-                <div className="text-center mb-4">
-                    <h3 className="text-light">Forgot Your Password?</h3>
-                    <p className="text-light">Enter your email to get a link to reset your password</p>
+                    <div className="text-center mb-4">
+                        <h3 className="text-light">Forgot Your Password?</h3>
+                        <p className="text-light">Enter your email to get a link to reset your password</p>
+                    </div>
+                    
+                    <FormInput
+                        type="email"
+                        label="Email address"
+                        placeholder="your@email.com"
+                        inputValue={email}
+                        onChange={(e) => setEmail(e.target.value)} 
+                        onSubmit={handleSend}
+                        isSuccess={msg ? sendSuccess : null}
+                        statusMsg={msg}
+                    />
+                    
+                    <SubmitButton
+                        onClick={handleSend}
+                        isDisabled={loading}
+                        disabledMsg="Sending..."
+                        defaultMsg="Send Reset Link"
+                        className="mb-4"
+                    />
+
+                    <Link to="/login" className="link-light link-underline-opacity-100 link">
+                        Return to Login
+                    </Link>
                 </div>
-                
-                <FormInput
-                    type="email"
-                    label="Email address"
-                    placeholder="your@email.com"
-                    inputValue={email}
-                    onChange={(e) => setEmail(e.target.value)} 
-                    onSubmit={handleSend}
-                    isSuccess={msg ? sendSuccess : null}
-                    statusMsg={msg}
-                />
-                
-                <SubmitButton
-                    onClick={handleSend}
-                    isDisabled={loading}
-                    disabledMsg="Sending..."
-                    defaultMsg="Send Reset Link"
-                />
-
-                <Link to="/login" className="link-light link-underline-opacity-0 link-underline-opacity-75-hover">
-                    Return to Login
-                </Link>
             </div>
-        </div>
+        </PageTransition>
     );
 };
 

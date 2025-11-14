@@ -20,10 +20,14 @@ function Login()
   
         try
         {    
-            const response = await fetch(URL.buildPath('api/users/login'),
-                {method:'POST',credentials: "include",body:js,headers:{'Content-Type': 'application/json'}});
+            const response = await fetch(URL.buildPath('api/users/login'), {
+                method:'POST',
+                credentials: "include",
+                body: js,
+                headers: {'Content-Type': 'application/json'}
+            });
   
-            var res = JSON.parse(await response.text());
+            var res = await response.json();
   
             if( !res.success )
             {
@@ -31,7 +35,13 @@ function Login()
             }
             else
             {
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res._id}
+                var user = {
+                    id: res._id,
+                    firstName: res.firstName,
+                    lastName: res.lastName,
+                    isVerified: res.isVerified,
+                    accessToken: res.accessToken
+                };
                 localStorage.setItem('user_data', JSON.stringify(user));
   
                 setMessage('');
@@ -43,7 +53,7 @@ function Login()
             alert(error.toString());
             return;
         }    
-      };
+    };
 
     function handleSetLoginName( e: any ) : void
     {

@@ -1,11 +1,14 @@
 import Login from '../components/Login.tsx';
+import { PageTransition } from '../components/PageTransition.tsx';
 
 const LoginPage = () =>
 {
     return(
-        <div>
-            <Login/>
-        </div>
+        <PageTransition>
+            <div>
+                <Login/>
+            </div>
+        </PageTransition>
     );
 };
 

@@ -6,7 +6,6 @@ export function buildPath(route) {
         return `https://${app_name}/${route}`;
     }
     else{
-        console.log("localhost");
         return `http://localhost:5000/${route}`;
     }
 }
