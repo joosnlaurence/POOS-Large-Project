@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 // JWT / token configuration
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'dev-access-secret';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'dev-refresh-secret';
-const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL || '15m'; // jwt expiresIn syntax
+const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL || '24h'; // jwt expiresIn syntax
 const REFRESH_TOKEN_DAYS = parseInt(process.env.REFRESH_TOKEN_DAYS || '7', 10);
 
 export function generateAccessToken(user) {

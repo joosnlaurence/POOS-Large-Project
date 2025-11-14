@@ -7,6 +7,7 @@ import 'register_screen.dart';
 import 'home_screen.dart';
 import 'forgot_password_screen.dart';
 import '../api/network.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
+  final storage = FlutterSecureStorage();
+
 Future<void> handleLogin() async {
   final username = _username.text.trim();
   final password = _password.text.trim();
@@ -26,9 +29,9 @@ Future<void> handleLogin() async {
   try {
     print('=== LOGIN DEBUG ===');
     print('Username: $username');
-    
+
     final resp = await dio.post(
-      "/login",
+      "users/login",
       data: {"ident": username, "password": password},
     );
 
@@ -37,6 +40,13 @@ Future<void> handleLogin() async {
 
     if (resp.statusCode == 200 || resp.statusCode == 201) {
       final data = resp.data;
+
+      final accessToken = data["accessToken"];
+      final refreshToken = data["refreshToken"];
+
+      await storage.write(key: "accessToken", value: accessToken);
+      await storage.write(key: "refreshToken", value: refreshToken);
+
       final user = User.fromJson(data);
 
       if (!mounted) return;

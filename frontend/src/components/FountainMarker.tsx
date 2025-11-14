@@ -5,11 +5,12 @@ import '../scss/HomeUI.scss';
 import { SubmitButton } from './SubmitButton';
 import { sendVote } from '../utils/voting.ts';
 
-function FountainMarker({ fountain, selected, onFilterUpdate }: 
+function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}: 
     { 
         fountain: Fountain; 
         selected: boolean; 
-        onFilterUpdate: (fountainId: string, newFilterColor: string) => void
+        onFilterUpdate: (fountainId: string, newFilterColor: string) => void;
+        setOverlayImage: (url: string) => void
     })
 {
     const markerRef = useRef<any>(null);
@@ -67,7 +68,13 @@ function FountainMarker({ fountain, selected, onFilterUpdate }:
                     </div>
 
                     <div className="popup-right">
-                        <img src={fountain.imageUrl} alt="Fountain" className="fountain-image" />
+                        <img 
+                            src={fountain.imageUrl} 
+                            alt="Fountain" 
+                            className="fountain-image" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setOverlayImage(fountain.imageUrl)}
+                        />
                     </div>
 
                     <div className="popup-bottom">

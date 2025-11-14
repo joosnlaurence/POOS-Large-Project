@@ -26,6 +26,7 @@ function HomeUI() {
         [28.585046774053048, -81.20933419132147], // southwest corner
         [28.611871821522072, -81.18538756991485], // northeast corner
     ];
+    const [overlayImage, setOverlayImage] = useState<string | null>(null);
     
     // Used to update a single fountain's filter
     const updateFountainFilter = (fountainId: string, newFilterColor: string) => {
@@ -108,6 +109,7 @@ function HomeUI() {
                                 fountain={fountain}
                                 selected={true}
                                 onFilterUpdate={updateFountainFilter}
+                                setOverlayImage={setOverlayImage}
                             />
                         ) : null
                     ))}
@@ -139,6 +141,12 @@ function HomeUI() {
                                 ))
                             )}
                         </div>
+                    </div>
+                )}
+                {overlayImage && (
+                    <div className="image-overlay">
+                        <button className="overlay-close" onClick={() => setOverlayImage(null)}>✕</button>
+                        <img src={overlayImage} alt="Full Size Fountain" className="overlay-image"/>
                     </div>
                 )}
             </div>
