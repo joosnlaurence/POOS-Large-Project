@@ -13,7 +13,7 @@ import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
 
-function HomeUI() {
+function HomePage() {
     const mapRef = useRef(null);
     const centerLocation: [number, number] = [28.602348, -81.200227];
 
@@ -155,5 +155,5 @@ function HomeUI() {
 }
 
 
-export default HomeUI;
+export default HomePage;
 
