@@ -7,6 +7,7 @@ import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { validateEmail } from "../utils/validation.ts";
 import { SubmitButton } from "../components/SubmitButton.tsx";
+import { MainCard } from "../components/MainCard.tsx";
 
 function Register()
 {
@@ -38,7 +39,7 @@ function Register()
 
     const navigate = useNavigate();
 
-    async function handleLogin() : Promise<void>
+    async function handleRegister() : Promise<void>
     {
         let errors = false;
 
@@ -162,90 +163,90 @@ function Register()
 
     return (
         <PageTransition>
-            <div className="container-fluid d-flex flex-column justify-content-center align-items-center min-vh-100">
-                <div className="main-container card shadow-lg p-4 mx-auto">
-                    <WheresMyWaterTitle />    
+            <MainCard>
+                <WheresMyWaterTitle />    
 
-                    <FormInput
-                        label='First Name'
-                        placeholder='Bob'
-                        inputValue={firstName}
-                        onChange={(e) => setFirstName(e.target.value.trim())}
-                        onSubmit={handleLogin}
-                        isSuccess={validFirstName}
-                        statusMsg={firstNameMsg}
-                        formClassName="mb-4"
-                    />
-                    <FormInput
-                        label='Last Name'
-                        placeholder='Jenkins'
-                        inputValue={lastName}
-                        onChange={(e) => setLastName(e.target.value.trim())}
-                        onSubmit={handleLogin}
-                        isSuccess={validLastName}
-                        statusMsg={lastNameMsg}
-                        formClassName="mb-4"
-                    />
-                    <FormInput
-                        label='Username'
-                        placeholder='yourusername123'
-                        inputValue={username}
-                        onChange={(e) => setUsername(e.target.value.trim())}
-                        onSubmit={handleLogin}
-                        isSuccess={validUsername}
-                        statusMsg={usernameMsg}
-                        formClassName="mb-4"
-                    />
-                    <FormInput
-                        type="email"
-                        id="emailInput"
-                        label='Email address'
-                        placeholder='your@email.com'
-                        inputValue={email}
-                        onChange={(e) => setEmail(e.target.value.trim())}
-                        onSubmit={handleLogin}
-                        isSuccess={validEmail}
-                        statusMsg={emailMsg}
-                        formClassName="mb-4"
-                    />
-                    <FormInput
-                        type="password"
-                        label='Password'
-                        placeholder='dontstealthis!!!'
-                        inputValue={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onSubmit={handleLogin}
-                        isSuccess={validPassword}
-                        statusMsg={passwordMsg}
-                        formClassName="mb-4"
-                    />
+                <h1></h1>
 
-                    {msg && (
-                        <div className="mb-2">
-                        
-                            <i className={`bi p-2 ${ registerSuccess
-                                ? `bi-check-circle-fill success-text` 
-                                : `bi-exclamation-diamond-fill failure-text`}`}
-                            ></i>
-                            <span className={`fw-medium ${registerSuccess ? "success-text" : "failure-text"}`}>
-                                {msg}
-                            </span>
-                        </div>
-                    )}
+                <FormInput
+                    label='First Name'
+                    placeholder='Bob'
+                    inputValue={firstName}
+                    onChange={(e) => setFirstName(e.target.value.trim())}
+                    onSubmit={handleRegister}
+                    isSuccess={validFirstName}
+                    statusMsg={firstNameMsg}
+                    formClassName="mb-4"
+                />
+                <FormInput
+                    label='Last Name'
+                    placeholder='Jenkins'
+                    inputValue={lastName}
+                    onChange={(e) => setLastName(e.target.value.trim())}
+                    onSubmit={handleRegister}
+                    isSuccess={validLastName}
+                    statusMsg={lastNameMsg}
+                    formClassName="mb-4"
+                />
+                <FormInput
+                    label='Username'
+                    placeholder='yourusername123'
+                    inputValue={username}
+                    onChange={(e) => setUsername(e.target.value.trim())}
+                    onSubmit={handleRegister}
+                    isSuccess={validUsername}
+                    statusMsg={usernameMsg}
+                    formClassName="mb-4"
+                />
+                <FormInput
+                    type="email"
+                    id="emailInput"
+                    label='Email address'
+                    placeholder='your@email.com'
+                    inputValue={email}
+                    onChange={(e) => setEmail(e.target.value.trim())}
+                    onSubmit={handleRegister}
+                    isSuccess={validEmail}
+                    statusMsg={emailMsg}
+                    formClassName="mb-4"
+                />
+                <FormInput
+                    type="password"
+                    label='Password'
+                    placeholder='dontstealthis!!!'
+                    inputValue={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onSubmit={handleRegister}
+                    isSuccess={validPassword}
+                    statusMsg={passwordMsg}
+                    formClassName="mb-4"
+                />
 
-                    <SubmitButton 
-                        onClick={handleLogin}
-                        isDisabled={loading}
-                        defaultMsg="Register"
-                        disabledMsg="Validating New User..."
-                        className="mb-4"
-                    />
+                {msg && (
+                    <div className="mb-2">
+                    
+                        <i className={`bi p-2 ${ registerSuccess
+                            ? `bi-check-circle-fill success-text` 
+                            : `bi-exclamation-diamond-fill failure-text`}`}
+                        ></i>
+                        <span className={`fw-medium ${registerSuccess ? "success-text" : "failure-text"}`}>
+                            {msg}
+                        </span>
+                    </div>
+                )}
 
-                    <Link to="/login" className="link-light link-underline-opacity-100 link">
-                        Return to Login →
-                    </Link>
-                </div>
-            </div>
+                <SubmitButton 
+                    onClick={handleRegister}
+                    isDisabled={loading}
+                    defaultMsg="Register"
+                    disabledMsg="Validating New User..."
+                    className="mb-4"
+                />
+
+                <Link to="/login" className="link-light link-underline-opacity-100 link">
+                    Return to Login →
+                </Link>
+            </MainCard>
         </PageTransition>
 );
 }
