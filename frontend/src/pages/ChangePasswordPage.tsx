@@ -91,6 +91,7 @@ const ChangePasswordPage = () => {
                     isDisabled={loading}
                     disabledMsg="Resetting..."
                     defaultMsg="Reset Password"
+                    className="mb-4"
                 />
 
                 <Link to="/login" className="link-light link">

@@ -8,6 +8,7 @@ interface SubmitButtonProps {
     disabledMsg?: string;
     defaultMsg: string;
     className?: string;
+    id?: string;
 }
 
 export const SubmitButton: React.FC<SubmitButtonProps> = ({
@@ -16,16 +17,23 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
     isDisabled = false,
     disabledMsg = "",
     defaultMsg,
-    className = ""
+    className = "",
+    id = "",
 }) => {
     return (
         <button 
             type="button" 
-            className={`btn fw-medium mx-auto shadow-lg submit-btn ${className} mb-4`} 
+            className={`btn fw-medium mx-auto shadow-lg submit-btn ${className}`} 
+            id={id}
             style={{ width }}
             onClick={onClick} disabled={isDisabled}
         >
-            {isDisabled ? disabledMsg : defaultMsg}
+            { isDisabled ? (
+                <>
+                    <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">{disabledMsg}</span>
+                </>
+            ) : (defaultMsg) }
         </button>
     )
 };

@@ -62,6 +62,7 @@ const PasswordResetPage = () => {
                         isDisabled={loading}
                         disabledMsg="Sending..."
                         defaultMsg="Send Reset Link"
+                        className="mb-4"
                     />
 
                     <Link to="/login" className="link-light link-underline-opacity-100 link">

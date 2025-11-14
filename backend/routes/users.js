@@ -187,7 +187,7 @@ export function createUsersRouter(db) {
             const account = await db.collection('users').findOne({_id: new ObjectId(userId)});
             if(!account) return res.sendStatus(403);
             const accessToken = generateAccessToken(account);
-            res.json({ accessToken });
+            res.status(201).json({ accessToken });
         });
     });
 

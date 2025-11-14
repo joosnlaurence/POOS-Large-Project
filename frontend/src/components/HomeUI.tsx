@@ -7,6 +7,8 @@ import type { Fountain } from '../types/Fountain';
 import '../scss/HomeUI.scss';
 import L from 'leaflet';
 import locationImg from '../assets/Location.png';
+import { SubmitButton } from './SubmitButton';
+import { sendVote } from '../utils/voting.ts';
 
 const userLocationIcon = L.icon({
     iconUrl: locationImg,
@@ -50,9 +52,45 @@ function AutoLocationMarker()
     );
 }
 
-function FountainMarker({ fountain, selected }: { fountain: Fountain; selected: boolean })
+function FountainMarker({ fountain, selected, onFilterUpdate }: 
+    { 
+        fountain: Fountain; 
+        selected: boolean; 
+        onFilterUpdate: (fountainId: string, newFilterColor: string) => void
+    })
 {
     const markerRef = useRef<any>(null);
+
+    const [msg, setMsg] = useState("");
+    const [vote,setVote] = useState("");
+    const [voteSuccess, setVoteSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    async function handleVote() {
+        setMsg("");
+
+        if(!vote || vote === 'none'){
+            // popup that say something like "Please choose a vote"
+            console.log("Please choose a vote");
+            return;
+        }
+
+        setLoading(true);
+        console.log(`sending ${vote} to ${fountain.id}`)
+        
+        const res = await sendVote(fountain.id, vote);
+        
+        setMsg(res.msg);
+        setVoteSuccess(res.success);
+
+        if(res.filterChanged) {
+            // also want in the toast to put some sort of message that says "You updated the fountain filter!"
+            onFilterUpdate(fountain.id, res.newFilterColor);
+        }
+        
+        console.log(res.msg, res.success, res.updatedVote, res.filterChanged, res.newFilterColor)
+        setLoading(false);
+    }
 
     useEffect(() => {
         if (selected && markerRef.current) {
@@ -75,13 +113,25 @@ function FountainMarker({ fountain, selected }: { fountain: Fountain; selected: 
                     </div>
 
                     <div className="popup-bottom">
-                        <select className="filter-select">
+                        <select 
+                            className="filter-select"
+                            value={vote}
+                            onChange={(e) => setVote(e.target.value)}
+                        >
                             <option value="none">Select Status Color</option>
                             <option value="green">Green</option>
                             <option value="yellow">Yellow</option>
                             <option value="red">Red</option>
                         </select>
-                        <button className="submit-button">Submit</button>
+
+                        <SubmitButton 
+                            onClick={handleVote}
+                            defaultMsg='Submit'
+                            isDisabled={loading}
+                            disabledMsg=""
+                            id='toastBtn' // We'll use this when we display the toast
+                        />
+                        
                     </div>
                 </div>
             </Popup>
@@ -105,6 +155,17 @@ function HomeUI() {
         [28.611871821522072, -81.18538756991485], // northeast corner
     ];
     
+    // Used to update a single fountain's filter
+    const updateFountainFilter = (fountainId: string, newFilterColor: string) => {
+        setFountains(prevFountains =>
+            // Iterates through every fountain to find the correct one to update
+            prevFountains.map(f =>
+                f.id === fountainId
+                    ? { ...f, filterStatus: newFilterColor }
+                    : f
+            )
+        )
+    };
 
     async function handleSetSelectedBuilding(b: Building | null)
     {
@@ -171,6 +232,7 @@ function HomeUI() {
                             key={fountain.id}
                             fountain={fountain}
                             selected={true}
+                            onFilterUpdate={updateFountainFilter}
                         />
                     ) : null
                 ))}
