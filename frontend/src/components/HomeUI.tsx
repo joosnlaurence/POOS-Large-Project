@@ -1,145 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
-import LoadBuildings from './LoadBuildings';
-import LoadFountains from './LoadFountains';
+import { useRef, useState } from 'react';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import type { Building } from '../types/Building';
 import type { Fountain } from '../types/Fountain';
-import '../scss/HomeUI.scss';
+
 import L from 'leaflet';
-import locationImg from '../assets/Location.png';
-import { SubmitButton } from './SubmitButton';
-import { sendVote } from '../utils/voting.ts';
 
-const userLocationIcon = L.icon({
-    iconUrl: locationImg,
-    iconSize: [30, 30],       
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -25],
-});
+import '../scss/HomeUI.scss';
 
-
-function AutoLocationMarker()
-{
-    const [position, setPosition] = useState<[number, number] | null>(null);
-    const map = useMap();
-
-    useEffect(() => {
-        // Try to get the location immediately, then update every 5 seconds
-        const updateLocation = () => {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const newPos: [number, number] = [pos.coords.latitude, pos.coords.longitude];
-                    setPosition(newPos);
-                    //map.flyTo(newPos, map.getZoom());
-                },
-                (err) => {
-                    console.error("Error getting location:", err);
-                },
-                { enableHighAccuracy: true }
-            );
-        };
-
-        updateLocation(); // initial call
-        const interval = setInterval(updateLocation, 5000); // every 5 seconds
-
-        return () => clearInterval(interval);
-    }, [map]);
-
-    return position === null ? null : (
-        <Marker position={position} icon={userLocationIcon}>
-            <Popup>You are here</Popup>
-        </Marker>
-    );
-}
-
-function FountainMarker({ fountain, selected, onFilterUpdate }: 
-    { 
-        fountain: Fountain; 
-        selected: boolean; 
-        onFilterUpdate: (fountainId: string, newFilterColor: string) => void
-    })
-{
-    const markerRef = useRef<any>(null);
-
-    const [msg, setMsg] = useState("");
-    const [vote,setVote] = useState("");
-    const [voteSuccess, setVoteSuccess] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    async function handleVote() {
-        setMsg("");
-
-        if(!vote || vote === 'none'){
-            // popup that say something like "Please choose a vote"
-            console.log("Please choose a vote");
-            return;
-        }
-
-        setLoading(true);
-        console.log(`sending ${vote} to ${fountain.id}`)
-        
-        const res = await sendVote(fountain.id, vote);
-        
-        setMsg(res.msg);
-        setVoteSuccess(res.success);
-
-        if(res.filterChanged) {
-            // also want in the toast to put some sort of message that says "You updated the fountain filter!"
-            onFilterUpdate(fountain.id, res.newFilterColor);
-        }
-        
-        console.log(res.msg, res.success, res.updatedVote, res.filterChanged, res.newFilterColor)
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        if (selected && markerRef.current) {
-            markerRef.current.openPopup();
-        }
-    }, [selected]);
-
-    return (
-        <Marker position={fountain.fountainLocation} ref={markerRef}>
-            <Popup maxWidth={380} className="fountain-popup">
-                <div className="fountain-popup-div">
-                    <div className="popup-left">
-                        <p><strong>Floor:</strong> {(fountain.floor == 1 ? "1st" : fountain.floor == 2 ? "2nd" : fountain.floor == 3 ? "3rd" : fountain.floor + "th")}</p>
-                        <p><strong>Description:</strong><br/>{fountain.fountainDescription}</p>
-                        <p><strong>Filter Status:</strong><br/><span className={`status-circle ${fountain.filterStatus}`}></span> {fountain.filterStatus}</p>
-                    </div>
-
-                    <div className="popup-right">
-                        <img src={fountain.imageUrl} alt="Fountain" className="fountain-image" />
-                    </div>
-
-                    <div className="popup-bottom">
-                        <select 
-                            className="filter-select"
-                            value={vote}
-                            onChange={(e) => setVote(e.target.value)}
-                        >
-                            <option value="none">Select Status Color</option>
-                            <option value="green">Green</option>
-                            <option value="yellow">Yellow</option>
-                            <option value="red">Red</option>
-                        </select>
-
-                        <SubmitButton 
-                            onClick={handleVote}
-                            defaultMsg='Submit'
-                            isDisabled={loading}
-                            disabledMsg=""
-                            id='toastBtn' // We'll use this when we display the toast
-                        />
-                        
-                    </div>
-                </div>
-            </Popup>
-        </Marker>
-    );
-}
-
-
+import FountainMarker from './FountainMarker';
+import AutoLocationMarker from './AutoLocationMarker';
+import LoadBuildings from './LoadBuildings';
+import LoadFountains from './LoadFountains';
 
 function HomeUI() {
     const mapRef = useRef(null);
