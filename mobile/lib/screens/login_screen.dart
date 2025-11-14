@@ -32,7 +32,7 @@ Future<void> handleLogin() async {
 
     final resp = await dio.post(
       "users/login",
-      data: {"ident": username, "password": password},
+      data: {"ident": username, "password": password, "clientType": "mobile"},
     );
 
     print('Response status: ${resp.statusCode}');
