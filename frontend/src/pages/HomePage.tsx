@@ -79,7 +79,28 @@ function HomeUI() {
 
     return (
         <div>
-            <LoggedInName />
+            <div className="top-navbar">
+                <div className="navbar-title">Navbar</div>
+            </div>
+
+            <div className="location-container">
+                <div className="location-title">Select Your Location or Click a Pin</div>
+
+                <select className="location-select" value={selectedBuilding?.id || ""}
+                    onChange={(e) => {
+                    const found = buildings.find(b => b.id === e.target.value);
+                    handleSetSelectedBuilding(found || null);
+                    }}
+                >
+                    <option value="">Choose a building...</option>
+                    {buildings.map(b => (
+                    <option key={b.id} value={b.id}>
+                        {b.name}
+                    </option>
+                    ))}
+                </select>
+            </div>
+
             <div className="home-container">
                 
                 <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
