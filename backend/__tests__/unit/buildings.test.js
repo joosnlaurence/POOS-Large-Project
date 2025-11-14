@@ -1,4 +1,5 @@
 // backend/__tests__/unit/buildings.test.js
+import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import { createBuildingsRouter } from '../../routes/buildings.js';
@@ -8,7 +9,9 @@ function makeMockApp(overrides = {}) {
   app.use(express.json());
 
   const mockCollection = {
-    find: jest.fn().mockReturnValue({ toArray: jest.fn().mockResolvedValue([]) }),
+    find: jest.fn().mockReturnValue({
+      toArray: jest.fn().mockResolvedValue([]),
+    }),
     findOne: jest.fn().mockResolvedValue(null),
     insertOne: jest.fn().mockResolvedValue({ insertedId: 'fakeid' }),
     updateOne: jest.fn().mockResolvedValue({ matchedCount: 0 }),
@@ -42,7 +45,7 @@ describe('Buildings router – unit / validation', () => {
 
     const res = await request(app)
       .post('/api/buildings/update')
-      .send({ _id: '656565656565656565656565' }); // syntactically valid ObjectId
+      .send({ _id: '656565656565656565656565' });
 
     expect(res.statusCode).toBe(400);
     expect(res.body.success).toBe(false);
