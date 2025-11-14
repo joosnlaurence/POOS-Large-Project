@@ -1,7 +1,6 @@
 import waterText from '../assets/water.png';
-import React from 'react';
 
-export const WheresMyWaterTitle: React.FC = () => {
+function WheresMyWaterTitle() {
   return (
     <div className="text-center mb-4 wheres-my-water inter">
       <div>
@@ -14,3 +13,5 @@ export const WheresMyWaterTitle: React.FC = () => {
     </div>
   );
 };
+
+export default WheresMyWaterTitle;

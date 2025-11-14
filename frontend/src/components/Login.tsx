@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../scss/Login.scss";
 import * as URL from '../url.ts';
+import WheresMyWaterTitle from "./WheresMyWaterTitle.tsx";
 
 function Login()
 {
@@ -68,10 +69,7 @@ function Login()
   return (
     <div className="loginBody">
       <div className="loginContainer">
-        <div className="headerContainer loginContainerHeader trade-winds">
-          <span id="upperLoginHead">Plunder the</span>
-          <span id="lowerLoginHead">Cap'n's Log</span>
-        </div>
+        <WheresMyWaterTitle />
 
         <form onSubmit={doLogin}>
           <div className="loginGroup">

@@ -51,6 +51,18 @@ $wheres-my-blue: #13C5E2;
     -webkit-text-stroke-width: 1px;
 }
 
+@mixin glow($color, $blur, $type: 'box') {
+    @if $type == 'box'{
+        box-shadow: 0 0 $blur $color !important;
+    }
+    @else if $type == 'text' {
+        text-shadow: 0 0 $blur $color !important;
+    }
+    @else if $type == 'image' {
+        filter: drop-shadow(0 0 $blur $color);
+    }
+}
+
 .wheres-my-water
 {
     div {
@@ -62,7 +74,11 @@ $wheres-my-blue: #13C5E2;
     }
 
     img {
-        max-height: 70px;        
+        transition: 0.3s ease;
+        max-height: 70px;     
+    }
+    img:hover {
+        @include glow($wheres-my-blue, 10px, 'image');  
     }
     
     #wheres {
@@ -94,14 +110,5 @@ $failure: $orange-300;
     width: 100%;
     background-color: #8D3C05;
     border-radius: 16px;
-}
-
-@mixin glow($color, $blur, $type: 'box') {
-    @if $type == 'box'{
-        box-shadow: 0 0 $blur $color !important;
-    }
-    @else if $type == 'text' {
-        text-shadow: 0 0 $blur $color !important;
-    }    
 }
 

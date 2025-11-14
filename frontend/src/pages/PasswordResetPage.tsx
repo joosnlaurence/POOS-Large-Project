@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 
 import "../scss/PasswordReset.scss";
 
-import { WheresMyWaterTitle } from "../components/WheresMyWaterTitle.tsx";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
-import { sendResetLink, validateEmail } from "../utils/passwordResetUtils.ts";
+import { sendResetLink } from "../utils/passwordResetUtils.ts";
+import { validateEmail } from "../utils/validation.ts";
 import { PageTransition } from "../components/PageTransition.tsx";
 
 const PasswordResetPage = () => {
@@ -55,6 +56,7 @@ const PasswordResetPage = () => {
                         onSubmit={handleSend}
                         isSuccess={msg ? sendSuccess : null}
                         statusMsg={msg}
+                        formClassName="mb-4"
                     />
                     
                     <SubmitButton
@@ -66,7 +68,7 @@ const PasswordResetPage = () => {
                     />
 
                     <Link to="/login" className="link-light link-underline-opacity-100 link">
-                        Return to Login
+                        Return to Login →
                     </Link>
                 </div>
             </div>

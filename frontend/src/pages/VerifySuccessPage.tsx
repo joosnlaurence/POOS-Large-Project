@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import "../scss/VerifySuccess.scss";
-import { WheresMyWaterTitle } from "../components/WheresMyWaterTitle";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
 
 const VerifySuccessPage = () => {
     return (

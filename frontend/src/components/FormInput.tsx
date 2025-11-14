@@ -38,7 +38,7 @@ export const FormInput: React.FC<FormInputProps> = ({
     required = false,
     disabled = false,
     className = "",
-    formClassName = "mb-4"
+    formClassName = ""
 }) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,7 +56,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             style={{ width: formWidth }}
             onSubmit={handleSubmit}
         >
-            <div className="form-floating mb-1" style={{ width: inputWidth }}>
+            <div className="form-floating" style={{ width: inputWidth }}>
                 <input 
                     type={type}
                     className={`form-control ${isSuccess === false ? "failure-send" : ""} ${className}`}
