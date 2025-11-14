@@ -23,17 +23,22 @@ void setupDio() {
         return handler.next(options);
       },
       onError: (err, handler) async {
-        if (err.response?.statusCode == 401 &&
+        if ((err.response?.statusCode == 401 || err.response?.statusCode == 403) &&
             !err.requestOptions.extra.containsKey("refreshAttempt")) {
 
           try {
             err.requestOptions.extra["refreshAttempt"] = true;
+            print(err.response?.statusCode);
+            final refreshToken = await storage.read(key: "refreshToken");
+            print(refreshToken);
             final refreshResp = await dio.post(
               "users/refresh",
+              data: {"refreshToken": refreshToken},
               options: Options(
                 headers: {"Content-Type": "application/json"},
               ),
             );
+
             final newToken = refreshResp.data["accessToken"];
             if (newToken == null) {
               return handler.reject(err);
@@ -59,6 +64,10 @@ Future<Response> _retryRequest(RequestOptions requestOptions, String token) asyn
     headers: {
       ...requestOptions.headers,
       "Authorization": "Bearer $token",
+    },
+    extra: {
+      ...requestOptions.extra,
+      "refreshAttempt": true,
     },
   );
 
