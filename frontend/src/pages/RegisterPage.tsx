@@ -109,10 +109,10 @@ function Register()
         setLoading(true);
         try
         {   
-            const response = await fetch(URL.buildPath('api/users/register'),
+            let response = await fetch(URL.buildPath('api/users/register'),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
-            var res = JSON.parse(await response.text());
+            let res = JSON.parse(await response.text());
   
             if( !res.success )
             {
@@ -127,16 +127,29 @@ function Register()
             }
             else
             {
-                var user = { 
-                    firstName:firstName,
-                    lastName:lastName,
-                    id:res._id
+                const loginResponse = await fetch(URL.buildPath('api/users/login'), {
+                    method:'POST',
+                    credentials: "include",
+                    body: JSON.stringify({ ident: username, password: password }),
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                res = JSON.parse(await loginResponse.text());
+
+                console.log(res.body);
+
+                const user = {
+                    id: res._id,
+                    firstName: res.firstName,
+                    lastName: res.lastName,
+                    isVerified: res.isVerified,
+                    accessToken: res.accessToken
                 };
                 localStorage.setItem('user_data', JSON.stringify(user));
   
-                setMsg("User successfully created! Returning to Login...");
+                setMsg("User successfully created! Logging you in...");
                 setRegisterSuccess(true);
-                setTimeout(() => navigate('/login'), 2000);
+                setTimeout(() => navigate('/home'), 2000);
             }
         }
         catch(error:any)
