@@ -27,7 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _password.text.trim();
 
     try {
-      final resp = await dio.post(
+        print("hello");
+      final resp1 = await dio.post(
         "users/register",  // Using dio now
         data: {
           "firstName": firstName,
@@ -37,15 +38,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "password": password,
         },
       );
+      print(resp1.statusCode);
+      final resp2 = await dio.post(
+        "users/login",
+        data: {"ident": username, "password": password},
+      );
+      print(resp2.statusCode);
 
-      if (resp.statusCode == 201 || resp.statusCode == 200) {
-        final user = User(
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          email: email,
-          token: '', // optional if backend doesn't return token
-        );
+      if (resp2.statusCode == 201 || resp2.statusCode == 200) {
+        final data = resp2.data;
+
+        final accessToken = data["accessToken"];
+        final refreshToken = data["refreshToken"];
+
+        await storage.write(key: "accessToken", value: accessToken);
+        await storage.write(key: "refreshToken", value: refreshToken);
+
+        final user = User.fromJson(data);
 
         if (!mounted) return;
         Navigator.pushReplacement(
@@ -54,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Registration failed: ${resp.data}")),
+          SnackBar(content: Text("Registration failed: ${resp1.data}")),
         );
       }
     } catch (err) {
