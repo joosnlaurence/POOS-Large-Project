@@ -134,12 +134,12 @@ export function createUsersRouter(db) {
         const hashed = await bcrypt.hash(password, 10);
 
         const ins = await db.collection('users').insertOne({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          user: uname,
-          email: mail,
-          password: hashed,
-          isVerified: false,
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            user: uname,
+            email: mail,
+            password: hashed,
+            isVerified: false,
         });
 
         res.status(201).json({ _id: ins.insertedId, success: true, error: '' });
@@ -147,30 +147,33 @@ export function createUsersRouter(db) {
         // Skip email during tests to avoid open handles/logs
         const isRunningTests = !!process.env.JEST_WORKER_ID;
         if (!isRunningTests) {
-          const verifyToken = jwt.sign(
-            { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
-            process.env.JWT_EMAIL_SECRET || 'temp_secret',
-            { expiresIn: '1h' }
-          );
-          const verifyUrl = `${URL.buildPath('api/users/verify-email')}?token=${encodeURIComponent(verifyToken)}`;
+            const verifyToken = jwt.sign(
+                { id: ins.insertedId.toString(), email: mail, aud: 'email_verify' },
+                process.env.JWT_EMAIL_SECRET || 'temp_secret',
+                { expiresIn: '1h' }
+            );
+            const verifyUrl = `${URL.buildPath('api/users/verify-email')}?token=${encodeURIComponent(verifyToken)}`;
 
-          sendMail({
-            to: mail,
-            subject: 'Verify your email',
-            html: `
-              <p>Hi ${firstName.trim()},</p>
-              <p>Click below to verify your email (expires in 1 hour):</p>
-              <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-            `
-          }).catch(err => console.error('Verification email failed:', err?.message || err));
+            sendMail({
+                to: mail,
+                subject: 'Verify your email',
+                html: `
+                <p>Hi ${firstName.trim()},</p>
+                <p>Click below to verify your email (expires in 1 hour):</p>
+                <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+                `
+            }).catch(err => console.error('Verification email failed:', err?.message || err));
         }
-      } catch (err) {
+      } 
+      catch (err) {
         if (err?.code === 11000) {
-          return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
+            return res.status(409).json({ _id: -1, success: false, error: 'Username/email already in use' });
         }
-        console.error('Register error:', err);
-        return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
-        }
+            console.error('Register error:', err);
+            return res.status(500).json({ _id: -1, success: false, error: 'Database error occurred' });
+      }
+
+      
     });
 
     router.post('/refresh', async (req, res) => {
@@ -183,7 +186,7 @@ export function createUsersRouter(db) {
         jwt.verify(token, REFRESH_TOKEN_SECRET, async (err, payload) => {
             if(err) return res.sendStatus(403);
             // payload should contain user id
-            const userId = payload.id;
+            const userId = payload.userId;
             const account = await db.collection('users').findOne({_id: new ObjectId(userId)});
             if(!account) return res.sendStatus(403);
             const accessToken = generateAccessToken(account);
