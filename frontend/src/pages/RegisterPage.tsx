@@ -166,7 +166,12 @@ function Register()
             <MainCard>
                 <WheresMyWaterTitle />    
 
-                <h1></h1>
+                <h1 className="mb-2 text-light">
+                    Register a New User
+                </h1>
+                <p className="mb-4 text-light">
+                    Your email will be sent a verification link
+                </p>
 
                 <FormInput
                     label='First Name'
