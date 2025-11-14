@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import "../scss/VerifySuccess.scss";
 import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
 import { MainCard } from "../components/MainCard";
 

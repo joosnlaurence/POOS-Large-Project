@@ -1,4 +1,4 @@
-import waterText from '../assets/water.png';
+import waterText from '../assets/water.webp';
 
 function WheresMyWaterTitle() {
   return (

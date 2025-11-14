@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 
-import "../scss/ChangePassword.scss";
-
 import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
