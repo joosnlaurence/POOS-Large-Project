@@ -81,4 +81,86 @@ describe('Fountains router – integration', () => {
 
     expect(res.statusCode).toBe(400);
     expect(res.body.success).toBe(false);
-    expect(res.body.error).toBe('
+    expect(res.body.error).toBe('Invalid id');
+  });
+
+  test('POST /api/fountains/update updates fields', async () => {
+    const { insertedId } = await db.collection('fountains').insertOne({
+      location: { building: 'Old', description: '', coordinates: null },
+      floor: 1,
+      imgUrl: 'img',
+      filter: 'red',
+      lastUpdate: new Date(),
+    });
+
+    const res = await request(app)
+      .post('/api/fountains/update')
+      .send({
+        _id: insertedId.toString(),
+        location: { building: 'New', description: 'Outside', coordinates: { x: 1, y: 2 } },
+        filter: 'green',
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.success).toBe(true);
+
+    const updated = await db.collection('fountains').findOne({ _id: insertedId });
+    expect(updated.location.building).toBe('New');
+    expect(updated.location.description).toBe('Outside');
+    expect(updated.filter).toBe('green');
+  });
+
+  test('POST /api/fountains/create with buildingId links to building', async () => {
+    const { insertedId: buildingId } = await db.collection('buildings').insertOne({
+      name: 'Eng 2',
+      pinCoords: { latitude: 1, longitude: 2 },
+      fountainIds: [],
+    });
+
+    const res = await request(app)
+      .post('/api/fountains/create')
+      .send({
+        location: { building: 'Eng 2' },
+        filter: 'yellow',
+        imgUrl: 'img',
+        buildingId: buildingId.toString(),
+      });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body.success).toBe(true);
+
+    const building = await db.collection('buildings').findOne({ _id: buildingId });
+    const fountainId = new ObjectId(res.body._id);
+
+    expect(building.fountainIds.map(String)).toContain(String(fountainId));
+  });
+
+  test('POST /api/fountains/delete deletes fountain and unlinks from buildings', async () => {
+    const { insertedId } = await db.collection('fountains').insertOne({
+      location: { building: 'Test', description: '', coordinates: null },
+      floor: 1,
+      imgUrl: 'img',
+      filter: 'red',
+      lastUpdate: new Date(),
+    });
+
+    await db.collection('buildings').insertOne({
+      name: 'Eng 3',
+      pinCoords: { latitude: 1, longitude: 2 },
+      fountainIds: [insertedId],
+    });
+
+    const res = await request(app)
+      .post('/api/fountains/delete')
+      .send({ _id: insertedId.toString() });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.success).toBe(true);
+
+    const fountain = await db.collection('fountains').findOne({ _id: insertedId });
+    expect(fountain).toBeNull();
+
+    const building = await db.collection('buildings').findOne({ name: 'Eng 3' });
+    expect(building.fountainIds.map(String)).not.toContain(String(insertedId));
+  });
+});
