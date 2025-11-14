@@ -442,6 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Business Administration II",
                             "Engineering I",
                             "Engineering II",
+                            "L3Harris Engineering Center",
                           ].map(
                             (e) {
                               return DropdownMenuItem(
