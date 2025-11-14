@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchVerificationStatus() async {
     try {
       final response = await dio.post(
-        '/check-verification',
+        'users/check-verification',
         data: {"email": widget.user.email},
       );
 
