@@ -5,6 +5,7 @@ import { PageTransition } from "../components/PageTransition";
 import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
 import { SubmitButton } from "../components/SubmitButton";
 import { sendResetLink } from "../utils/passwordResetUtils";
+import { useNavigate } from "react-router-dom";
 
 function AccountPage()
 {
@@ -15,6 +16,7 @@ function AccountPage()
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState("Sending...");
     const [linkSent, setLinkSent] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getUserData();
@@ -25,8 +27,7 @@ function AccountPage()
         const stored = localStorage.getItem("user_data");
         if (!stored)
         {
-            setLoading(true);
-            setMsg("Invalid Account Please Logout and Log Back In.");
+            navigate("/");
             return;
         }
         const userData = JSON.parse(stored);
