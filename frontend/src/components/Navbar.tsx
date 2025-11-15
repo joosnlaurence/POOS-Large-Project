@@ -1,6 +1,6 @@
 import '../scss/Navbar.scss';
 import Logo from "../assets/Logo.png"
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as URL from '../url.ts';
 
 function Navbar() {
@@ -25,19 +25,25 @@ function Navbar() {
         <div className="navbar-content">
           {/* Logo/Title Section */}
           <div className="title-section">
-            <h1 className="title">
-              <span className="title-wheres">Where's My</span>
-              <span className="title-water">Water?</span>
-            </h1>
+            <Link to="/home" className="title-section" style={{ textDecoration: "none" }}>
+              <h1 className="title">
+                <span className="title-wheres">Where's My</span>
+                <span className="title-water">Water?</span>
+              </h1>
+            </Link>
           </div>
 
           {/* Alligator Character */}
           <div className="right-section">
-            <img 
-              src={Logo}
-              alt="Alligator character"
-              className="alligator-image"
-            />
+            <Link to="/account">
+              <img 
+                src={Logo}
+                alt="Alligator character"
+                className="alligator-image"
+                style={{ cursor: "pointer" }}
+              />
+            </Link>
+
 
             {/* Log out button */}
             <button className="logout-button" onClick={doLogout}>
