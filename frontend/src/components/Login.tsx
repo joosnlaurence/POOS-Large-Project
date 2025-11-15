@@ -38,6 +38,8 @@ function Login()
             {
                 var user = {
                     id: res._id,
+                    username: res.user,
+                    email: res.email,
                     firstName: res.firstName,
                     lastName: res.lastName,
                     isVerified: res.isVerified,

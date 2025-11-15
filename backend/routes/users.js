@@ -40,6 +40,7 @@ export function createUsersRouter(db) {
 
         let ret = {
             _id: -1,
+            user: '',
             firstName: '',
             lastName: '',
             email: '',
@@ -83,6 +84,7 @@ export function createUsersRouter(db) {
             const isMobile = headerClient === 'mobile' || bodyClient === 'mobile';
 
             ret._id = account._id;
+            ret.user = account.user;
             ret.firstName = account.firstName;
             ret.lastName = account.lastName;
             ret.email = account.email;

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import type { Building } from '../types/Building';
 import type { Fountain } from '../types/Fountain';
@@ -13,6 +13,7 @@ import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
 import buildingImg from '../assets/Building.png';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const buildingIcon = L.icon({
     iconUrl: buildingImg,
@@ -35,7 +36,23 @@ function HomePage() {
         [28.611871821522072, -81.18538756991485], // northeast corner
     ];
     const [overlayImage, setOverlayImage] = useState<string | null>(null);
+    const navigate = useNavigate();
+
     
+    useEffect(() => {
+        checkLogin();
+    }, []);
+
+    function checkLogin()
+    {
+        const stored = localStorage.getItem("user_data");
+        if (!stored)
+        {
+            navigate("/");
+            return;
+        }
+    }
+
     // Used to update a single fountain's filter
     const updateFountainFilter = (fountainId: string, newFilterColor: string) => {
         setFountains(prevFountains =>
@@ -107,7 +124,7 @@ function HomePage() {
                 </select>
             </div>
 
-            <div className="home-container">
+            <div className="home-container mx-auto p-lg-4">
                 
                 <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
                     <TileLayer

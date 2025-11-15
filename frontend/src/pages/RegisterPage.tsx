@@ -141,6 +141,8 @@ function Register()
 
                 const user = {
                     id: res._id,
+                    username: username,
+                    email: email,
                     firstName: res.firstName,
                     lastName: res.lastName,
                     isVerified: res.isVerified,
