@@ -124,7 +124,7 @@ function HomePage() {
                 </select>
             </div>
 
-            <div className="home-container">
+            <div className="home-container mx-auto p-lg-4">
                 
                 <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
                     <TileLayer
