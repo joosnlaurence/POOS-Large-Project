@@ -50,6 +50,7 @@ export async function sendVote(fountainId: string, rating: string) {
             const refreshResponse = await fetch(URL.buildPath('/api/users/refresh'), {
                 method: "POST",
                 credentials: 'include',
+                body: JSON.stringify({ id: userData.id })
             });
             
             // we can't create a new access token

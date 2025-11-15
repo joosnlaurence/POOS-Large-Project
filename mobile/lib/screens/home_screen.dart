@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchVerificationStatus() async {
     try {
       final response = await dio.post(
-        '/check-verification',
+        'users/check-verification',
         data: {"email": widget.user.email},
       );
 
@@ -442,6 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Business Administration II",
                             "Engineering I",
                             "Engineering II",
+                            "L3Harris Engineering Center",
                           ].map(
                             (e) {
                               return DropdownMenuItem(

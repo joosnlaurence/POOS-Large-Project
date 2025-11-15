@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 
-import "../scss/ChangePassword.scss";
-
-import { WheresMyWaterTitle } from "../components/WheresMyWaterTitle.tsx";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
 import { resetPassword, checkNewPassword } from "../utils/passwordResetUtils.ts";
+import { MainCard } from "../components/MainCard.tsx";
 
 const ChangePasswordPage = () => {
     const [searchParams] = useSearchParams();
@@ -58,47 +57,47 @@ const ChangePasswordPage = () => {
     }
 
     return (
-        <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
-            <div className="main-container card shadow-lg p-4 mx-auto text-light">
-                <WheresMyWaterTitle/>
-                
-                <h1 className="fw-semibold">Change Password</h1>
-                <p className="fw-semibold">Enter your new password</p>
+        <MainCard>
+            <WheresMyWaterTitle/>
+            
+            <h1 className="fw-semibold text-light">Change Password</h1>
+            <p className="fw-semibold text-light">Enter your new password</p>
 
-                <FormInput
-                    type="password"
-                    label="New Password"
-                    placeholder="stealthispassword123"
-                    inputValue={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    onSubmit={handleReset}
-                    isSuccess={success}
-                />
+            <FormInput
+                type="password"
+                label="New Password"
+                placeholder="stealthispassword123"
+                inputValue={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                onSubmit={handleReset}
+                isSuccess={success}
+                className="mb-4"
+            />
 
-                <FormInput
-                    type="password"
-                    label="Confirm Password"
-                    placeholder="stealthispassword123"
-                    inputValue={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    onSubmit={handleReset}
-                    isSuccess={success}
-                    statusMsg={msg}
-                />
+            <FormInput
+                type="password"
+                label="Confirm Password"
+                placeholder="stealthispassword123"
+                inputValue={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onSubmit={handleReset}
+                isSuccess={success}
+                statusMsg={msg}
+                className='mb-4'
+            />
 
-                <SubmitButton 
-                    onClick={handleReset}
-                    isDisabled={loading}
-                    disabledMsg="Resetting..."
-                    defaultMsg="Reset Password"
-                    className="mb-4"
-                />
+            <SubmitButton 
+                onClick={handleReset}
+                isDisabled={loading}
+                disabledMsg="Resetting..."
+                defaultMsg="Reset Password"
+                className="mb-4"
+            />
 
-                <Link to="/login" className="link-light link">
-                    Return to Login
-                </Link>
-            </div>
-        </div>
+            <Link to="/login" className="link-light link">
+                Return to Login
+            </Link>
+        </MainCard>
     );
 };
 

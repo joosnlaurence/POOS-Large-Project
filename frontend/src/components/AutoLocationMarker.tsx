@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Marker, Popup, useMap} from 'react-leaflet';
 import '../scss/HomeUI.scss';
-import locationImg from '../assets/Location.png';
+import locationImg from '../assets/Location.webp';
 import L from 'leaflet';
 
 const userLocationIcon = L.icon({
