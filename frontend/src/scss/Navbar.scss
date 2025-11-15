@@ -1,82 +1,87 @@
-.top-navbar {
-    width: 100%;
-    background-color: #8D3C05;
-    padding: 12px 24px;
+.water-navbar {
+  background: #8D3C05;
+  border-bottom: 4px solid #7c2d12;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
 
-    display: flex;
-    justify-content: flex-start;
-    border-bottom: 3px solid #6B2D04;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.navbar-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.75rem 2.5rem;
+  box-sizing: border-box;
 }
 
 .navbar-content {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
 
-.navbar-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-right: auto;
-    margin: 0;
-    display: flex;
-    gap: 8px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+.title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
 }
 
 .title-wheres {
-    color: #FFA500;
-}
-
-.title-my {
-    color: #90EE90;
+  color: #fef3c7;
+  text-shadow: 3px 3px 0 rgba(139, 69, 19, 0.5), -1px -1px 0 rgba(139, 69, 19, 0.3);
 }
 
 .title-water {
-    color: #00BFFF;
-    margin-right: auto;
+  color: #22d3ee;
+  text-shadow: 3px 3px 0 rgba(0, 100, 150, 0.6), -1px -1px 0 rgba(0, 100, 150, 0.4);
 }
 
-.navbar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    gap: 16px;
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
+.alligator-image {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
 
-.gator-logo {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
+.alligator-image:hover {
+  transform: scale(1.05);
 }
 
 .logout-button {
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 16px;
-    text-decoration: underline;
-    transition: color 0.2s;
-    
-    &:hover {
-        color: #FFD700;
-    }
+  background-color: transparent;
+  color: white;
+  font-weight: bold;
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  transition: opacity 0.2s;
+}
+
+.logout-button:hover {
+  opacity: 0.85;
+}
+
+.logout-button:active {
+  opacity: 0.7;
 }

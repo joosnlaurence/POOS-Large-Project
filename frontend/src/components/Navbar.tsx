@@ -1,43 +1,52 @@
 import '../scss/Navbar.scss';
-import { useNavigate } from "react-router-dom";
-import * as URL from '../url.ts';
 import Logo from "../assets/Logo.png"
+import { useNavigate } from 'react-router-dom';
+import * as URL from '../url.ts';
 
-function Navbar()
-{
+function Navbar() {
+
     const navigate = useNavigate();
 
     async function doLogout(event: any) {
-        event.preventDefault();
+            event.preventDefault();
+    
+            await fetch(URL.buildPath('api/users/logout'), {
+                method: "POST",
+                credentials: "include",     // send cookie so backend clears it
+            });
+    
+            navigate("/");
+    } 
 
-        await fetch(URL.buildPath('api/users/logout'), {
-            method: "POST",
-            credentials: "include",     // send cookie so backend clears it
-        });
+  return (
+    <nav className="water-navbar">
+      <div className="navbar-container">
+        <div className="navbar-content">
+          {/* Logo/Title Section */}
+          <div className="title-section">
+            <h1 className="title">
+              <span className="title-wheres">Where's My</span>
+              <span className="title-water">Water?</span>
+            </h1>
+          </div>
 
-        navigate("/");
-    }
+          {/* Alligator Character */}
+          <div className="right-section">
+            <img 
+              src={Logo}
+              alt="Alligator character"
+              className="alligator-image"
+            />
 
-    return (
-        <div className="top-navbar">
-            <div className="navbar-content">
-                <h1 className="navbar-title">
-                    <span className="title-wheres">Where's</span>
-                    <span className="title-my">My</span>
-                    <span className="title-water">Water?</span>
-                </h1>
-                
-                <div className="navbar-right">
-                    <div className="gator-logo">
-                        <img src={Logo} alt="IMAGEMISSING" />
-                    </div>
-                    <button className="logout-button" onClick={doLogout}>
-                        Log out
-                    </button>
-                </div>
-            </div>
+            {/* Log out button */}
+            <button className="logout-button" onClick={doLogout}>
+              Log out
+            </button>
+          </div>
         </div>
-    );
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar;
