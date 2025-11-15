@@ -1,4 +1,3 @@
-import LoggedInName from '../components/LoggedInName';
 import { useRef, useState } from 'react';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import type { Building } from '../types/Building';
@@ -12,6 +11,14 @@ import FountainMarker from '../components/FountainMarker';
 import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
+import buildingImg from '../assets/Building.png';
+
+const buildingIcon = L.icon({
+    iconUrl: buildingImg,
+    iconSize: [30, 30],       
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -25],
+});
 
 function HomeUI() {
     const mapRef = useRef(null);
@@ -84,7 +91,7 @@ function HomeUI() {
             </div>
 
             <div className="location-container">
-                <div className="location-title">Select Your Location or Click a Pin</div>
+                <div className="location-title">Select Your Location or Click a Building</div>
 
                 <select className="location-select" value={selectedBuilding?.id || ""}
                     onChange={(e) => {
@@ -119,6 +126,7 @@ function HomeUI() {
                             eventHandlers={{
                                 click: () => handleSetSelectedBuilding(b),
                             }}
+                            icon={buildingIcon}
                         />
                     ))}
 
