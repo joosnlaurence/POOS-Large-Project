@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import PasswordResetPage from "./pages/PasswordResetPage";
 import VerifySuccessPage from "./pages/VerifySuccessPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/reset-password" element={<PasswordResetPage />} />
         <Route path="/verify/success" element={<VerifySuccessPage />} />
         <Route path="/change-password" element={<ChangePasswordPage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
     </BrowserRouter>
   );
