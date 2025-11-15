@@ -1,5 +1,5 @@
 import '../scss/Navbar.scss';
-import Logo from "../assets/Logo.png"
+import Logo from "../assets/Logo.webp"
 import { Link, useNavigate } from 'react-router-dom';
 import * as URL from '../url.ts';
 

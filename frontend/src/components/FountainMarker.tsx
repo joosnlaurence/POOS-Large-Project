@@ -4,7 +4,7 @@ import type { Fountain } from '../types/Fountain';
 import '../scss/HomeUI.scss';
 // import { SubmitButton } from './SubmitButton';
 import { sendVote } from '../utils/voting.ts';
-import fountainImg from '../assets/Fountain.png';
+import fountainImg from '../assets/Fountain.webp';
 import L from 'leaflet';
 import SubmitButtonAddToast from './SubmitButtonAddToast.tsx';
 
@@ -68,6 +68,8 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
         }
     }, [selected]);
 
+    const mapContainer = document.querySelector('.leaflet-container');
+
     return (
         <Marker position={fountain.fountainLocation} ref={markerRef} icon={fountainLocationIcon}>
             <Popup maxWidth={380} className="fountain-popup">
@@ -100,12 +102,14 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
                             <option value="red">Red</option>
                         </select>
 
+                        
+
                         <SubmitButtonAddToast 
                             header="Voting"
                             buttonMsg="Submit"
                             onClick={handleVote}
                             position='top-end'
-                            containerElement={document.querySelector('.leaflet-container')}
+                            containerElement={mapContainer}
                         />
                         
                     </div>

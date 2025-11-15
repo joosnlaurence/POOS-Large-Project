@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import waterText from '../assets/water.webp';
 
 function WheresMyWaterTitle() {
@@ -8,7 +9,10 @@ function WheresMyWaterTitle() {
         <span id="my">My</span>
       </div>
       <div>
-        <img src={waterText} id="water" alt="Water text logo" />
+        <Link to="https://github.com/joosnlaurence/POOS-Large-Project">
+            <img src={waterText} id="water" alt="Water text logo" />
+        </Link>
+        
       </div>
     </div>
   );

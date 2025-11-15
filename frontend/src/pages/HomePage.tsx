@@ -11,7 +11,7 @@ import FountainMarker from '../components/FountainMarker';
 import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
-import buildingImg from '../assets/Building.png';
+import buildingImg from '../assets/Building.webp';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
