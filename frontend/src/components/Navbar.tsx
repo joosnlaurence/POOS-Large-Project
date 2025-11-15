@@ -9,7 +9,8 @@ function Navbar() {
 
     async function doLogout(event: any) {
             event.preventDefault();
-    
+
+            localStorage.removeItem("user_data");
             await fetch(URL.buildPath('api/users/logout'), {
                 method: "POST",
                 credentials: "include",     // send cookie so backend clears it
