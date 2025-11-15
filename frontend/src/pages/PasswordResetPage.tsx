@@ -15,7 +15,7 @@ const PasswordResetPage = () => {
     const [email, setEmail] = useState("");
     const [msg, setMsg] = useState("");
     const [loading, setLoading] = useState(false);
-    const [sendSuccess, setSendSuccess] = useState(true); 
+    const [sendSuccess, setSendSuccess] = useState(false); 
 
     async function handleSend() {
         setMsg("");
@@ -35,7 +35,6 @@ const PasswordResetPage = () => {
         setSendSuccess(res.success);
         setLoading(false);
     } 
-
 
     return (
         <PageTransition>

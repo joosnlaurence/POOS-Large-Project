@@ -56,7 +56,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             style={{ width: formWidth }}
             onSubmit={handleSubmit}
         >
-            <div className="form-floating" style={{ width: inputWidth }}>
+            <div className="form-floating mx-auto" style={{ width: inputWidth }}>
                 <input 
                     type={type}
                     className={`form-control ${isSuccess === false ? "failure-send" : ""} ${className}`}
@@ -74,7 +74,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             </div>
             
             {statusMsg && (
-                <div className="status-msg">
+                <div className="status-msg mx-auto">
                  
                 <i className={`bi p-2 ${isSuccess 
                     ? `${successIcon} success-text` 

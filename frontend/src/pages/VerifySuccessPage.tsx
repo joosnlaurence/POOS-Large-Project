@@ -8,8 +8,8 @@ const VerifySuccessPage = () => {
         <MainCard>
             <WheresMyWaterTitle/>
             
-            <h1 className="mt-4 mb-4">Your account is now verified!</h1>
-            <p className="mb-4 fs-5">You can now log in and use all features.</p>
+            <h1 className="mt-4 mb-4 text-light">Your account is now verified!</h1>
+            <p className="mb-4 fs-5 text-light">You can now log in and use all features.</p>
             
             
             <Link to="/login" className="btn fw-medium mx-auto shadow-lg submit-btn" style = {{width: "50%"}}>
