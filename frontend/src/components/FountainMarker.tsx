@@ -4,6 +4,15 @@ import type { Fountain } from '../types/Fountain';
 import '../scss/HomeUI.scss';
 import { SubmitButton } from './SubmitButton';
 import { sendVote } from '../utils/voting.ts';
+import fountainImg from '../assets/Fountain.png';
+import L from 'leaflet';
+
+const fountainLocationIcon = L.icon({
+    iconUrl: fountainImg,
+    iconSize: [30, 30],       
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -25],
+});
 
 function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}: 
     { 
@@ -58,7 +67,7 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
     }, [selected]);
 
     return (
-        <Marker position={fountain.fountainLocation} ref={markerRef}>
+        <Marker position={fountain.fountainLocation} ref={markerRef} icon={fountainLocationIcon}>
             <Popup maxWidth={380} className="fountain-popup">
                 <div className="fountain-popup-div">
                     <div className="popup-left">
