@@ -12,6 +12,7 @@ import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
 import buildingImg from '../assets/Building.png';
+import Navbar from '../components/Navbar';
 
 const buildingIcon = L.icon({
     iconUrl: buildingImg,
@@ -86,9 +87,7 @@ function HomePage() {
 
     return (
         <div>
-            <div className="top-navbar">
-                <div className="navbar-title">Navbar</div>
-            </div>
+            <Navbar/>
 
             <div className="location-container">
                 <div className="location-title">Select Your Location or Click a Building</div>
