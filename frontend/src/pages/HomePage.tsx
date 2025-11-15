@@ -1,4 +1,3 @@
-import LoggedInName from '../components/LoggedInName';
 import { useRef, useState } from 'react';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import type { Building } from '../types/Building';
@@ -12,6 +11,15 @@ import FountainMarker from '../components/FountainMarker';
 import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
+import buildingImg from '../assets/Building.png';
+import Navbar from '../components/Navbar';
+
+const buildingIcon = L.icon({
+    iconUrl: buildingImg,
+    iconSize: [30, 30],       
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -25],
+});
 
 function HomePage() {
     const mapRef = useRef(null);
@@ -79,7 +87,26 @@ function HomePage() {
 
     return (
         <div>
-            <LoggedInName />
+            <Navbar/>
+
+            <div className="location-container">
+                <div className="location-title">Select Your Location or Click a Building</div>
+
+                <select className="location-select" value={selectedBuilding?.id || ""}
+                    onChange={(e) => {
+                    const found = buildings.find(b => b.id === e.target.value);
+                    handleSetSelectedBuilding(found || null);
+                    }}
+                >
+                    <option value="">Choose a building...</option>
+                    {buildings.map(b => (
+                    <option key={b.id} value={b.id}>
+                        {b.name}
+                    </option>
+                    ))}
+                </select>
+            </div>
+
             <div className="home-container">
                 
                 <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
@@ -98,6 +125,7 @@ function HomePage() {
                             eventHandlers={{
                                 click: () => handleSetSelectedBuilding(b),
                             }}
+                            icon={buildingIcon}
                         />
                     ))}
 
