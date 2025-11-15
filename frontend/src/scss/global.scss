@@ -25,13 +25,9 @@
     font-family: 'Baloo 2';
 }
 
-* {
-    margin: 0 auto;
-}
-
 body {
     background: url('../assets/tile_upscale.webp');
-    max-height: 100vh;
+    min-height: 100vh;
     font-family: 'Inter', cursive;
 }
 
@@ -97,14 +93,27 @@ $wheres-my-blue: #13C5E2;
 $button-color: #00B3CD;
 $button-color-hover: #018fa4;
 $success: $teal-400;
+$success-dark: $teal-800;
 $failure: $orange-300;
+$failure-dark: $orange-600;
+
+
 
 .success-text {
     color: $success;
 }
 
+.success-bg {
+    background-color: $success;
+}
+
 .failure-text {
     color: $failure;
+}
+
+
+.failure-bg {
+    background-color: $failure;
 }
 
 .main-container {
@@ -113,4 +122,36 @@ $failure: $orange-300;
     background-color: #8D3C05;
     border-radius: 16px;
 }
+
+
+// .toast-container {
+//     .toast-header.failure {
+//         background-color: $failure-dark;
+//         color: white; 
+//     }
+//     .toast-header.success {
+//         background-color: $success-dark;
+//         color:white;
+//     }
+    
+//     .toast-header {
+//         border-radius: 0.375rem 0.375rem 0 0;
+//     }
+//     .toast-body { 
+//         border-radius: 0 0 0.375rem 0.375rem;    
+//     }
+
+//     .toast-body.failure {
+//         background-color: rgba($failure, 0.5);
+//         color: white;
+//         backdrop-filter: blur(3px);
+//         -webkit-backdrop-filter: blur(3px);
+//     }
+//     .toast-body.success {
+//         background-color: rgba($success, 0.5);
+//         color: white;
+//         backdrop-filter: blur(3px);
+//         -webkit-backdrop-filter: blur(3px);
+//     }
+// }
 
