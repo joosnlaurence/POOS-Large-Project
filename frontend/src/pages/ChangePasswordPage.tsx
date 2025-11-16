@@ -59,7 +59,7 @@ const ChangePasswordPage = () => {
     
 
     return (
-        <MainCard>
+        <MainCard className="vh-100">
             <WheresMyWaterTitle/>
             
             <h1 className="fw-semibold text-light">Change Password</h1>

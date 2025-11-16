@@ -51,11 +51,11 @@ function AccountPage()
     }
 
     return (
-        <div>
+        <div className="d-flex flex-column vh-100">
             <Navbar/>
             <PageTransition>
-                <MainCard>
-                    <WheresMyWaterTitle />    
+                <MainCard >
+                    <WheresMyWaterTitle className="mb-4" />    
 
                     <h1 className="mb-2 text-light">
                         Your Account Info

@@ -61,6 +61,16 @@ $wheres-my-blue: #13C5E2;
     }
 }
 
+.white-glow {
+    transition: 0.3s ease;
+}   
+
+.white-glow:hover {
+    @include glow(white, 3px, 'image');
+    @include glow(white, 3px, 'text');
+}
+
+
 .wheres-my-water
 {
     div {
@@ -69,14 +79,27 @@ $wheres-my-blue: #13C5E2;
         font-weight: 600;
         margin-bottom: 0;
         font-size: 36pt;
-    }
+        line-height: 1;
 
-    img {
-        transition: 0.3s ease;
-        max-height: 70px;     
-    }
-    img:hover {
-        @include glow($wheres-my-blue, 10px, 'image');  
+        img {
+            transition: 0.3s ease;
+            max-height: 70px;     
+        }
+        img:hover {
+            @include glow($wheres-my-blue, 10px, 'image');  
+        }
+
+        span {
+            img {
+                transition: 0.3s ease;
+                max-height: 38px; 
+                width: auto;
+                vertical-align:-4px; 
+            }
+            img:hover {
+                @include glow($wheres-my-blue, 0px, 'image');  
+            }
+        }
     }
     
     #wheres {

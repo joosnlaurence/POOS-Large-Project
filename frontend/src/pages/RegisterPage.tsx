@@ -166,8 +166,8 @@ export default function RegisterPage()
 
     return (
         <PageTransition>
-            <MainCard>
-                <WheresMyWaterTitle />    
+            <MainCard className="vh-100"> 
+                <WheresMyWaterTitle className="mb-4"/>    
 
                 <h1 className="mb-2 text-light">
                     Register a New User
