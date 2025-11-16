@@ -7,7 +7,7 @@ interface PageTransitionProps {
 
 export const PageTransition = ({ children }: PageTransitionProps) => {
     return (
-        <div className="page-transition">
+        <div className="page-transition flex-grow-1">
             {children}
         </div>
     );

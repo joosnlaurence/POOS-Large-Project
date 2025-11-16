@@ -73,7 +73,7 @@ function Login()
     <PageTransition>
         <div className="loginBody">
         <div className="loginContainer">
-            <WheresMyWaterTitle />
+            <WheresMyWaterTitle className="mb-4" />
 
             <form onSubmit={doLogin}>
             <div className="loginGroup">

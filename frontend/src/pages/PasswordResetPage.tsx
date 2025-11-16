@@ -37,8 +37,8 @@ const PasswordResetPage = () => {
 
     return (
         <PageTransition>
-            <MainCard>
-                <WheresMyWaterTitle></WheresMyWaterTitle>
+            <MainCard className="vh-100">
+                <WheresMyWaterTitle className="mb-4" />
 
                 <div className="text-center mb-4">
                     <h3 className="text-light">Forgot Your Password?</h3>
