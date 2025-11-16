@@ -12,7 +12,6 @@ function WheresMyWaterTitle() {
         <Link to="https://github.com/joosnlaurence/POOS-Large-Project">
             <img src={waterText} id="water" alt="Water text logo" />
         </Link>
-        
       </div>
     </div>
   );

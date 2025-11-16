@@ -6,7 +6,7 @@ import '../scss/HomeUI.scss';
 import { sendVote } from '../utils/voting.ts';
 import fountainImg from '../assets/Fountain.webp';
 import L from 'leaflet';
-import SubmitButtonAddToast from './SubmitButtonAddToast.tsx';
+import SubmitButtonAddToast from './SubmitButtonAddToast';
 
 const fountainLocationIcon = L.icon({
     iconUrl: fountainImg,

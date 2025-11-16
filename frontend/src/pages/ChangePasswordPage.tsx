@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 
-import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
-import { FormInput } from "../components/FormInput.tsx";
-import { SubmitButton } from "../components/SubmitButton.tsx";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
+import { FormInput } from "../components/FormInput";
+import { SubmitButton } from "../components/SubmitButton";
 import { resetPassword, checkNewPassword } from "../utils/passwordResetUtils.ts";
-import { MainCard } from "../components/MainCard.tsx";
+import { MainCard } from "../components/MainCard";
 
 const ChangePasswordPage = () => {
     const [searchParams] = useSearchParams();
