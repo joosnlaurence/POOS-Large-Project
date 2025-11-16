@@ -1,4 +1,4 @@
-import type { Fountain } from "../types/Fountain.tsx";
+import type { Fountain } from "../types/Fountain";
 import * as URL from '../url.ts';
 
 async function LoadFountains(fountainIds: string[]): Promise<Fountain[]> {

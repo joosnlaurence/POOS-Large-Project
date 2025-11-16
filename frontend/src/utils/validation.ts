@@ -1,6 +1,7 @@
 import type { ValidateResponse } from "./passwordResetUtils";
+import * as EmailValidtor from 'email-validator';
 
-export function validateEmail(email: string, emailInputElement: HTMLInputElement | null): ValidateResponse {
+export function validateEmail(email: string): ValidateResponse {
     let msg: string;
     let valid: boolean;
     
@@ -8,7 +9,7 @@ export function validateEmail(email: string, emailInputElement: HTMLInputElement
         msg = "Email cannot be blank!"
         valid = false;
     }
-    else if(!emailInputElement?.checkValidity()) {
+    else if(!EmailValidtor.validate(email)) {
         msg = "Invalid email address format!";
         valid = false;
     }

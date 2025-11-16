@@ -51,6 +51,7 @@ export function createUsersRouter(db) {
 
         try {
             const {ident, password} = req.body;
+            console.log(`received login request for ident: ${ident}`);
 
             if(!(ident?.trim()) || !(password?.trim())){
                 ret.error = 'Missing fields';
@@ -118,6 +119,9 @@ export function createUsersRouter(db) {
 
       try {
         const { firstName, lastName = '', user, email, password } = req.body || {};
+
+        console.log(`received register request for user: ${user}`);
+
         if (!(firstName?.trim()) || !(user?.trim()) || !(email?.trim()) || !(password?.trim())) {
           return res.status(400).json({ ...ret, error: 'Missing fields' });
         }

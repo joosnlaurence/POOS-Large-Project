@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as URL from '../url.ts';
 
-import { PageTransition } from "../components/PageTransition.tsx";
-import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
-import { FormInput } from "../components/FormInput.tsx";
-import { validateEmail } from "../utils/validation.ts";
-import { SubmitButton } from "../components/SubmitButton.tsx";
-import { MainCard } from "../components/MainCard.tsx";
 
-function Register()
+import { PageTransition } from "../components/PageTransition";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
+import { FormInput } from "../components/FormInput";
+import { validateEmail } from "../utils/validation.ts";
+import { SubmitButton } from "../components/SubmitButton";
+import { MainCard } from "../components/MainCard";
+
+export default function RegisterPage()
 {
     const [msg, setMsg] = useState('');
     const [loading, setLoading] = useState(false);
@@ -64,15 +65,14 @@ function Register()
         if(username === ''){
             errors = true;
             setValidUsername(false);
-            setUsernameMsg("First name cannot be blank!");
+            setUsernameMsg("Username cannot be blank!");
         }
         else{
             setValidUsername(true);
             setUsernameMsg('');
         }
         
-        const emailInput = document.getElementById('emailInput') as HTMLInputElement;
-        const emailValidation = validateEmail(email, emailInput);
+        const emailValidation = validateEmail(email);
         if(!emailValidation.valid) {
             errors = true;
             setValidEmail(false);
@@ -157,7 +157,8 @@ function Register()
         }
         catch(error:any)
         {
-            alert(error.toString());
+            console.error(error.toString());
+            setMsg("Unknown error occurred. Please try again later.");
             return;
         }
         setLoading(false);
@@ -208,7 +209,7 @@ function Register()
                 <FormInput
                     type="email"
                     id="emailInput"
-                    label='Email address'
+                    label='Email Address'
                     placeholder='your@email.com'
                     inputValue={email}
                     onChange={(e) => setEmail(e.target.value.trim())}
@@ -255,8 +256,5 @@ function Register()
                 </Link>
             </MainCard>
         </PageTransition>
-);
+    );
 }
-
-
-export default Register;
