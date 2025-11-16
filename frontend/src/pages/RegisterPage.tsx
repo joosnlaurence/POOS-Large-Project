@@ -209,7 +209,7 @@ export default function RegisterPage()
                 <FormInput
                     type="email"
                     id="emailInput"
-                    label='Email address'
+                    label='Email Address'
                     placeholder='your@email.com'
                     inputValue={email}
                     onChange={(e) => setEmail(e.target.value.trim())}

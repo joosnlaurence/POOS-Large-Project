@@ -77,7 +77,7 @@ function Login()
 
             <form onSubmit={doLogin}>
             <div className="loginGroup">
-                <label htmlFor="loginName" className="pirata-one">Yer Username</label>
+                <label htmlFor="loginName" className="pirata-one">Username or Email Address</label>
                 <input
                 type="text"
                 id="loginName"
@@ -89,7 +89,7 @@ function Login()
             </div>
 
             <div className="loginGroup">
-                <label htmlFor="loginPassword" className="pirata-one">Yer Secret Key</label>
+                <label htmlFor="loginPassword" className="pirata-one">Password</label>
                 <input
                 type="password"
                 id="loginPassword"
@@ -116,17 +116,17 @@ function Login()
             </form>
 
             <div className="createAccountLink pirata-one">
-                <span>New to our crew?</span>
+                <span>New to Where's My Water?</span>
                 <span
                     id="createAccountPrompt"
                     onClick={() => (navigate("/register"))}
                 >
-                    Registarr here →
+                    Register here →
                 </span>
             </div>
 
             <div className="forgotPasswordLink pirata-one">
-                    <span>Forgot yer secret key?</span>
+                    <span>Forgot your password?</span>
                     <span
                         id="forgotPasswordPrompt"
                         onClick={() => (navigate("/reset-password"))}
