@@ -110,6 +110,16 @@ Future<void> fetchFountains() async {
       "Business Administration II": LatLng(28.600917, -81.198583),
       "Engineering I": LatLng(28.601478, -81.198306),
       "Engineering II": LatLng(28.602035, -81.198334),
+      "L3Harris Engineering Center": LatLng(28.600635061589994, -81.19764841593208),
+      "Student Union": LatLng(28.601925208633585, -81.20046762897825),
+      "Trevor Colbourn Hall": LatLng(28.60181671147115, -81.20332002855511),
+      "Visual Arts Building": LatLng(28.602773991202177, -81.2031361333844),
+      "Nicholson School of Communication": LatLng(28.60392553133033, -81.20294785839867),
+      "Classroom Building I": LatLng(28.60370460064793, -81.20050689420589),
+      "Classroom Building II": LatLng(28.604353786852773, -81.20016164624897),
+      "Psychology": LatLng(28.60473997781932, -81.19966275508496),
+      "Health Sciences I": LatLng(28.602978409949447, -81.19862587792863),
+      "Teaching Academy": LatLng(28.59927467909421, -81.20400230261204),
     };
     return coordinates[buildingName] ?? LatLng(28.602348, -81.200227);
   }
