@@ -15,12 +15,13 @@ const fountainLocationIcon = L.icon({
     popupAnchor: [0, -25],
 });
 
-function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}: 
+function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage, onDeselect}: 
     { 
         fountain: Fountain; 
         selected: boolean; 
         onFilterUpdate: (fountainId: string, newFilterColor: string) => void;
-        setOverlayImage: (url: string) => void
+        setOverlayImage: (url: string) => void;
+        onDeselect: () => void;
     })
 {
     const markerRef = useRef<any>(null);
@@ -71,7 +72,12 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
     const mapContainer = document.querySelector('.leaflet-container');
 
     return (
-        <Marker position={fountain.fountainLocation} ref={markerRef} icon={fountainLocationIcon}>
+        <Marker position={fountain.fountainLocation} ref={markerRef} icon={fountainLocationIcon}
+        eventHandlers={{
+        popupclose: () => {
+            if (selected) onDeselect();  // only unselect if it was selected
+        }
+        }}>
             <Popup maxWidth={380} className="fountain-popup">
                 <div className="fountain-popup-div">
                     <div className="popup-left">
@@ -90,29 +96,24 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
                         />
                     </div>
 
-                    <div className="popup-bottom">
-                        <select 
-                            className="filter-select"
-                            value={vote}
-                            onChange={(e) => setVote(e.target.value)}
-                        >
-                            <option value="none">Select Status Color</option>
-                            <option value="green">Green</option>
-                            <option value="yellow">Yellow</option>
-                            <option value="red">Red</option>
-                        </select>
+                    {fountain.filterStatus !== "none" && (
+                        <div className="popup-bottom">
+                            <select className="filter-select" value={vote} onChange={(e) => setVote(e.target.value)}>
+                                <option value="none">Select Status Color</option>
+                                <option value="green">Green</option>
+                                <option value="yellow">Yellow</option>
+                                <option value="red">Red</option>
+                            </select>
 
-                        
-
-                        <SubmitButtonAddToast 
-                            header="Voting"
-                            buttonMsg="Submit"
-                            onClick={handleVote}
-                            position='top-end'
-                            containerElement={mapContainer}
-                        />
-                        
-                    </div>
+                            <SubmitButtonAddToast 
+                                header="Voting"
+                                buttonMsg="Submit"
+                                onClick={handleVote}
+                                position='top-end'
+                                containerElement={mapContainer}
+                            />
+                        </div>
+                    )}
                 </div>
             </Popup>
         </Marker>
