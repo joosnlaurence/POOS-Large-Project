@@ -54,7 +54,52 @@ class _HomeScreenState extends State<HomeScreen> {
     "name": "L3Harris Engineering Center",
     "buildingId": "6915748bd8f8aa6afbf5aa3b",
     "position": LatLng(28.600635061589994, -81.19764841593208),  
-  },
+    },
+    {
+    "name": "Student Union",
+    "buildingId": "691a8ab04e6713825545c1df",
+    "position": LatLng(28.601925208633585, -81.20046762897825),  
+    },
+    {
+    "name": "Trevor Colbourn Hall",
+    "buildingId": "691a8af04e6713825545c1e0",
+    "position": LatLng(28.60181671147115, -81.20332002855511),  
+    },
+    {
+    "name": "Visual Arts Building",
+    "buildingId": "691a8b134e6713825545c1e1",
+    "position": LatLng(28.602773991202177, -81.2031361333844),  
+    },
+    {
+    "name": "Nicholson School of Communication",
+    "buildingId": "691a8b3b4e6713825545c1e2",
+    "position": LatLng(28.60392553133033, -81.20294785839867),  
+    },
+    {
+    "name": "Classroom Building I",
+    "buildingId": "691a8bec4e6713825545c1e3",
+    "position": LatLng(28.60370460064793, -81.20050689420589),  
+    },
+    {
+    "name": "Classroom Building II",
+    "buildingId": "691a8c104e6713825545c1e4",
+    "position": LatLng(28.604353786852773, -81.20016164624897),  
+    },
+    {
+    "name": "Psychology",
+    "buildingId": "691a8c4b4e6713825545c1e6",
+    "position": LatLng(28.60473997781932, -81.19966275508496),  
+    },
+    {
+    "name": "Health Sciences I",
+    "buildingId": "691a8c8c4e6713825545c1e7",
+    "position": LatLng(28.602978409949447, -81.19862587792863),  
+    },
+    {
+    "name": "Teaching Academy",
+    "buildingId": "691a8cef4e6713825545c1ea",
+    "position": LatLng(28.59927467909421, -81.20400230261204),  
+    },
   ];
 
   @override
@@ -443,6 +488,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Engineering I",
                             "Engineering II",
                             "L3Harris Engineering Center",
+                            "Student Union",                       
+                            "Trevor Colbourn Hall",                 
+                            "Visual Arts Building",                 
+                            "Nicholson School of Communication",    
+                            "Classroom Building I",                 
+                            "Classroom Building II",                
+                            "Psychology",                           
+                            "Health Sciences I",                    
+                            "Teaching Academy",
                           ].map(
                             (e) {
                               return DropdownMenuItem(
