@@ -1,10 +1,12 @@
 import '@testing-library/jest-dom';
-
 import { TextEncoder, TextDecoder } from 'util';
+import 'whatwg-fetch';
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+Object.assign(globalThis, {
+    TextEncoder,
+    TextDecoder,
+});
 
 jest.mock('../url.ts', () => ({
-    BASE_URL: 'http://localhost:5000'
+    buildPath: (path) => `http://localhost:5000/${path}`,
 }));

@@ -15,8 +15,9 @@ function Login()
     const [message,setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [loginName,setLoginName] = React.useState('');
+    const [validLogin, setValidLogin] = useState(true);
     const [loginPassword,setPassword] = React.useState('');
-    const [valid, setValid] = useState(true);
+    const [validPassword, setValidPassword] = useState(true);
     const navigate = useNavigate();
     const playSound = () => {
         const audio = new Audio(squeek);
@@ -43,7 +44,20 @@ function Login()
 
         var obj = {ident:loginName,password:loginPassword};
         var js = JSON.stringify(obj);
-        
+
+        if(!loginName.trim()){
+            setMessage('Please give your username or email.');
+            setValidLogin(false);
+            setValidPassword(loginPassword.trim() ? true : false);
+            return;
+        }
+        if(!loginPassword.trim()){
+            setMessage('Please give your password.');
+            setValidLogin(true);
+            setValidPassword(false);
+            return;
+        }
+
         setLoading(true);
         try
         {    
@@ -58,12 +72,14 @@ function Login()
   
             if( !res.success )
             {
-                setMessage('User/Password combination incorrect');
-                setValid(false);
+                setMessage(res.error);
+                setValidLogin(false);
+                setValidPassword(false);
             }
             else
             {
-                setValid(true);
+                setValidLogin(true);
+                setValidPassword(true);
                 var user = {
                     id: res._id,
                     username: res.user,
@@ -92,35 +108,13 @@ function Login()
         <MainCard className="vh-100"> 
             <WheresMyWaterTitle className="mb-4" />
 
-            {/* <div className="loginGroup">
-                <input
-                type="text"
-                id="loginName"
-                className="inputField typewriter-text"
-                placeholder="Username"
-                onChange={handleSetLoginName}
-                onKeyDown={(e) => e.key === "Enter" && doLogin}
-                />
-            </div>
-
-            <div className="loginGroup">
-                <input
-                type="password"
-                id="loginPassword"
-                className="inputField typewriter-text"
-                placeholder="Password"
-                onChange={handleSetPassword}
-                onKeyDown={(e) => e.key === "Enter" && doLogin}
-                />
-            </div> */}
-
             <FormInput
-                label='Username'
+                label='Username or Email Address'
                 placeholder='Bob'
                 inputValue={loginName}
                 onChange={(e) => setLoginName(e.target.value)}
                 onSubmit={doLogin}
-                isSuccess={valid}
+                isSuccess={validLogin}
                 formClassName="mb-4"
             />
 
@@ -131,17 +125,16 @@ function Login()
                 inputValue={loginPassword}
                 onChange={(e) => setPassword(e.target.value)}
                 onSubmit={doLogin}
-                isSuccess={valid}
+                isSuccess={validPassword}
                 formClassName="mb-4"
             />
 
             {message && (
                 <StatusText
-                success={valid}
+                success={validLogin && validPassword}
                 msg={message}
                 />
             )}
-
 
 
             <SubmitButton 
@@ -149,13 +142,13 @@ function Login()
                     isDisabled={loading}
                     defaultMsg="Login"
                     disabledMsg="Logging in..."
-                    className="mb-4"
+                    className="mb-4 text-light"
             />
 
             <div className="login-bottom-container">
                 {/* Text block stacked vertically */}
                 <div className="text-links">
-                    <div className="link-light text-center">
+                    <div className="link-light text-center mb-1">
                     New to Where's My Water?{" "}
                     <Link 
                         to="/register" 
@@ -168,7 +161,7 @@ function Login()
                     <div className="link-light text-center">
                     Forgot Password?{" "}
                     <Link 
-                        to="/register" 
+                        to="/reset-password" 
                         className="link-light link-underline-opacity-100 link"
                     >
                         Reset it here →
