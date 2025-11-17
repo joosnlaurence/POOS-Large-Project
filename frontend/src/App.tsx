@@ -8,19 +8,24 @@ import VerifySuccessPage from "./pages/VerifySuccessPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import AccountPage from "./pages/AccountPage";
 
+import '../node_modules/leaflet/dist/leaflet.css';
+import '../node_modules/leaflet/dist/leaflet';
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/reset-password" element={<PasswordResetPage />} />
-        <Route path="/verify/success" element={<VerifySuccessPage />} />
-        <Route path="/change-password" element={<ChangePasswordPage />} />
-        <Route path="/account" element={<AccountPage />} />
-      </Routes>
+        <main id="main-content">
+        <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/reset-password" element={<PasswordResetPage />} />
+            <Route path="/verify/success" element={<VerifySuccessPage />} />
+            <Route path="/change-password" element={<ChangePasswordPage />} />
+            <Route path="/account" element={<AccountPage />} />
+        </Routes>
+        </main>
     </BrowserRouter>
   );
 }

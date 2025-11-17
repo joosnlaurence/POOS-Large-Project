@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../scss/Login.scss";
 import * as URL from '../url.ts';
@@ -7,16 +7,16 @@ import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
 import { MainCard } from "../components/MainCard.tsx";
-import Ducky_3D from "../assets/Ducky_3D.webp"
+import Ducky_3D from "../assets/Ducky_resize.webp"
 import squeek from "../assets/squeek.mp3"
 
 function Login()
 {
     const [message,setMessage] = useState('');
     const [loading, setLoading] = useState(false);
-    const [loginName,setLoginName] = React.useState('');
+    const [loginName,setLoginName] = useState('');
     const [validLogin, setValidLogin] = useState(true);
-    const [loginPassword,setPassword] = React.useState('');
+    const [loginPassword,setPassword] = useState('');
     const [validPassword, setValidPassword] = useState(true);
     const navigate = useNavigate();
     const playSound = () => {
