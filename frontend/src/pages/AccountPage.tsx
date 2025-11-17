@@ -91,6 +91,9 @@ function AccountPage()
         if(res.isVerified){
             setIsVerified(true);
             setVerificationMsg("Email verified!");
+            const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+            userData.isVerified = true;
+            localStorage.setItem('user_data', JSON.stringify(userData));
             return;
         }
         else {
