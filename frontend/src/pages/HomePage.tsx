@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import type { Building } from '../types/Building';
 import type { Fountain } from '../types/Fountain';
 
@@ -11,7 +11,7 @@ import FountainMarker from '../components/FountainMarker';
 import AutoLocationMarker from '../components/AutoLocationMarker';
 import LoadBuildings from '../components/LoadBuildings';
 import LoadFountains from '../components/LoadFountains';
-import buildingImg from '../assets/Building.png';
+import buildingImg from '../assets/Building.webp';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +29,6 @@ function HomePage() {
     const buildings = LoadBuildings();
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
     const [fountains, setFountains] = useState<Fountain[]>([]);
-    const [showBuildings, setShowBuildings] = useState(true);
     const [selectedFountain, setSelectedFountain] = useState<Fountain | null>(null);
     const bounds: L.LatLngBoundsExpression = [
         [28.585046774053048, -81.20933419132147], // southwest corner
@@ -73,13 +72,11 @@ function HomePage() {
         if (b === null)
         {
             setFountains([]);
-            setShowBuildings(true);
         }
         else
         {
             
             const map = mapRef.current;
-            setShowBuildings(false);
             const loadedFountains = await LoadFountains(b.fountainIds);
             setFountains(loadedFountains);
             if (map && "flyTo" in map)
@@ -112,11 +109,11 @@ function HomePage() {
                 <select className="location-select" value={selectedBuilding?.id || ""}
                     onChange={(e) => {
                     const found = buildings.find(b => b.id === e.target.value);
-                    handleSetSelectedBuilding(found || null);
+                        handleSetSelectedBuilding(found || null);
                     }}
                 >
                     <option value="">Choose a building...</option>
-                    {buildings.map(b => (
+                    {(buildings.sort((a, b) => a.name.localeCompare(b.name))).map(b => (
                     <option key={b.id} value={b.id}>
                         {b.name}
                     </option>
@@ -124,7 +121,7 @@ function HomePage() {
                 </select>
             </div>
 
-            <div className="home-container mx-auto p-lg-4">
+            <div className="home-container mx-auto">
                 
                 <MapContainer center={centerLocation} ref={mapRef} zoom={17} style={{ flex: 1 }} className="custom-map" maxBounds={bounds} maxBoundsViscosity={1.0}>
                     <TileLayer
@@ -135,28 +132,32 @@ function HomePage() {
 
                     <AutoLocationMarker />
 
-                    {showBuildings && buildings.map((b) => (
-                        <Marker
-                            key={b.id}
-                            position={b.buildingLocation}
-                            eventHandlers={{
-                                click: () => handleSetSelectedBuilding(b),
-                            }}
-                            icon={buildingIcon}
-                        />
+                    {buildings
+                        .filter(b => b.id !== selectedBuilding?.id)
+                        .map((b) => (
+                            <Marker
+                                key={b.id}
+                                position={b.buildingLocation}
+                                eventHandlers={{
+                                    click: () => handleSetSelectedBuilding(b),
+                                }}
+                                icon={buildingIcon}
+                                >
+                                <Popup>
+                                    <strong>{b.name}</strong>
+                                </Popup>
+                            </Marker>
                     ))}
 
                     
-                    {fountains.map((fountain) => (
-                        selectedFountain?.id === fountain.id ? (
-                            <FountainMarker
-                                key={fountain.id}
-                                fountain={fountain}
-                                selected={true}
-                                onFilterUpdate={updateFountainFilter}
-                                setOverlayImage={setOverlayImage}
-                            />
-                        ) : null
+                    {selectedBuilding && fountains.map((fountain) => (
+                        <FountainMarker
+                            key={fountain.id}
+                            fountain={fountain}
+                            selected={selectedFountain?.id === fountain.id}
+                            onFilterUpdate={updateFountainFilter}
+                            setOverlayImage={setOverlayImage}
+                        />
                     ))}
 
                     

@@ -5,8 +5,8 @@ import { MainCard } from "../components/MainCard";
 
 const VerifySuccessPage = () => {
     return (
-        <MainCard>
-            <WheresMyWaterTitle/>
+        <MainCard className="vh-100">
+            <WheresMyWaterTitle className="mb-4" />
             
             <h1 className="mt-4 mb-4 text-light">Your account is now verified!</h1>
             <p className="mb-4 fs-5 text-light">You can now log in and use all features.</p>

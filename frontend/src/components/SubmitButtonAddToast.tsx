@@ -1,13 +1,16 @@
 import { useState, type ReactNode } from "react";
 import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
+import ToastContainer, { type ToastPosition } from 'react-bootstrap/ToastContainer';
 import { SubmitButton } from "./SubmitButton";
+import { createPortal } from "react-dom";
 
 interface SubmitButtonAddToastProps {
     header: string;
     buttonClassName?: string;
     buttonMsg: string,
     toastClassName?: string;
+    position: ToastPosition;
+    containerElement: Element | null;
     delay?: number;
     onClick: () => Promise<{ success: boolean, msg: string}>;
     // minsAgo: number;
@@ -36,6 +39,8 @@ const SubmitButtonAddToast = ({
     buttonClassName="",
     buttonMsg,
     toastClassName="",
+    position,
+    containerElement,
     delay=5000,
     onClick,
     // minsAgo=0,
@@ -88,7 +93,8 @@ const SubmitButtonAddToast = ({
                 defaultMsg={buttonMsg}
                 className={buttonClassName}
             />
-            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1 }}>
+            {containerElement && createPortal(
+            <ToastContainer position={position} className="p-3" style={{ zIndex: 10000 }}>
                 {toasts.map((toast) => (
                     <Toast 
                         key={toast.id}
@@ -105,7 +111,9 @@ const SubmitButtonAddToast = ({
                         <Toast.Body style={{ color: `${color(toast.success)}`}}>{toast.body}</Toast.Body>
                     </Toast>
                 ))}
-            </ToastContainer>
+            </ToastContainer>,
+            containerElement
+            )}
         </>
     )
 };

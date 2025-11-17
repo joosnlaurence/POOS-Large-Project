@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import type { Fountain } from '../types/Fountain';
 import '../scss/HomeUI.scss';
-import { SubmitButton } from './SubmitButton';
+// import { SubmitButton } from './SubmitButton';
 import { sendVote } from '../utils/voting.ts';
-import fountainImg from '../assets/Fountain.png';
+import fountainImg from '../assets/Fountain.webp';
 import L from 'leaflet';
+import SubmitButtonAddToast from './SubmitButtonAddToast';
 
 const fountainLocationIcon = L.icon({
     iconUrl: fountainImg,
@@ -27,7 +28,7 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
     const [msg, setMsg] = useState("");
     const [vote,setVote] = useState("");
     const [voteSuccess, setVoteSuccess] = useState(false);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
 
     async function handleVote() {
         // these are here just so TS doesn't complain about unused vars. 
@@ -38,12 +39,11 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
         setMsg("");
 
         if(!vote || vote === 'none'){
-            // popup that say something like "Please choose a vote"
             console.log("Please choose a vote");
-            return;
+            return { success: false, msg: "Please choose a vote"};
         }
 
-        setLoading(true);
+        // setLoading(true);
         console.log(`sending ${vote} to ${fountain.id}`)
         
         const res = await sendVote(fountain.id, vote);
@@ -57,7 +57,9 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
         }
         
         console.log(res.msg, res.success, res.updatedVote, res.filterChanged, res.newFilterColor)
-        setLoading(false);
+        // setLoading(false);
+
+        return {success: res.success, msg: res.msg}
     }
 
     useEffect(() => {
@@ -65,6 +67,8 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
             markerRef.current.openPopup();
         }
     }, [selected]);
+
+    const mapContainer = document.querySelector('.leaflet-container');
 
     return (
         <Marker position={fountain.fountainLocation} ref={markerRef} icon={fountainLocationIcon}>
@@ -98,12 +102,14 @@ function FountainMarker({ fountain, selected, onFilterUpdate, setOverlayImage}:
                             <option value="red">Red</option>
                         </select>
 
-                        <SubmitButton 
+                        
+
+                        <SubmitButtonAddToast 
+                            header="Voting"
+                            buttonMsg="Submit"
                             onClick={handleVote}
-                            defaultMsg='Submit'
-                            isDisabled={loading}
-                            disabledMsg=""
-                            id='toastBtn' // We'll use this when we display the toast
+                            position='top-end'
+                            containerElement={mapContainer}
                         />
                         
                     </div>

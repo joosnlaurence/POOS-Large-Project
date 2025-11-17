@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 
 import "../scss/PasswordReset.scss";
 
-import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
-import { FormInput } from "../components/FormInput.tsx";
-import { SubmitButton } from "../components/SubmitButton.tsx";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
+import { FormInput } from "../components/FormInput";
+import { SubmitButton } from "../components/SubmitButton";
 import { sendResetLink } from "../utils/passwordResetUtils.ts";
 import { validateEmail } from "../utils/validation.ts";
-import { PageTransition } from "../components/PageTransition.tsx";
-import { MainCard } from "../components/MainCard.tsx";
+import { PageTransition } from "../components/PageTransition";
+import { MainCard } from "../components/MainCard";
 
 const PasswordResetPage = () => {
     const [email, setEmail] = useState("");
@@ -20,8 +20,7 @@ const PasswordResetPage = () => {
     async function handleSend() {
         setMsg("");
 
-        const emailInput = document.getElementById('floatingInputValue') as HTMLInputElement;
-        const emailValidation = validateEmail(email, emailInput);
+        const emailValidation = validateEmail(email);
 
         if(!emailValidation.valid) {
             setMsg(emailValidation.msg);
@@ -38,8 +37,8 @@ const PasswordResetPage = () => {
 
     return (
         <PageTransition>
-            <MainCard>
-                <WheresMyWaterTitle></WheresMyWaterTitle>
+            <MainCard className="vh-100">
+                <WheresMyWaterTitle className="mb-4" />
 
                 <div className="text-center mb-4">
                     <h3 className="text-light">Forgot Your Password?</h3>
