@@ -150,15 +150,21 @@ function HomePage() {
                     ))}
 
                     
-                    {selectedBuilding && fountains.map((fountain) => (
-                        <FountainMarker
-                            key={fountain.id}
-                            fountain={fountain}
-                            selected={selectedFountain?.id === fountain.id}
-                            onFilterUpdate={updateFountainFilter}
-                            setOverlayImage={setOverlayImage}
-                        />
-                    ))}
+                    {selectedBuilding && (
+    (selectedFountain 
+        ? fountains.filter(f => f.id === selectedFountain.id)
+        : fountains
+    ).map((fountain) => (
+        <FountainMarker
+            key={fountain.id}
+            fountain={fountain}
+            selected={selectedFountain?.id === fountain.id}
+            onFilterUpdate={updateFountainFilter}
+            setOverlayImage={setOverlayImage}
+            onDeselect={() => setSelectedFountain(null)}
+        />
+    ))
+)}
 
                     
 
