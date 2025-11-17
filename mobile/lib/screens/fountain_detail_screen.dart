@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../api/network.dart';
 
 class FountainDetailScreen extends StatefulWidget {
@@ -56,11 +54,11 @@ class _FountainDetailScreenState extends State<FountainDetailScreen> {
         final data = response.data;
         if (data['success'] == true) {
           if (!mounted) return;
-          
-          String message = data['updatedVote'] == true 
+
+          String message = data['updatedVote'] == true
               ? "Vote updated successfully!"
               : "Vote submitted successfully!";
-          
+
           if (data['filterChanged'] == true) {
             message += "\nFilter color changed to ${data['newFilterColor']}!";
           }
@@ -151,78 +149,79 @@ class _FountainDetailScreenState extends State<FountainDetailScreen> {
                   ),
                 ),
 
-// Fountain Image
-Container(
-  margin: const EdgeInsets.all(16),
-  height: 300,
-  decoration: BoxDecoration(
-    color: Colors.grey.shade300,
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: widget.imageUrl.isNotEmpty
-      ? ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            widget.imageUrl,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
+                // Fountain Image
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: widget.imageUrl.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            widget.imageUrl,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Text(
+                                  "Image not available",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : const Center(
+                          child: Text(
+                            "No image available",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                 ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(
-                child: Text(
-                  "Image not available",
-                  style: TextStyle(fontSize: 16),
-                ),
-              );
-            },
-          ),
-        )
-      : const Center(
-          child: Text(
-            "No image available",
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-),
+
                 // Details Box
-Container(
-  margin: const EdgeInsets.all(16),
-  padding: const EdgeInsets.all(20),
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        "Location",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
-      Text(
-        widget.buildingName,
-        style: const TextStyle(color: Colors.grey),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        widget.fountainDescription,  // Add description here
-        style: const TextStyle(color: Colors.grey, fontSize: 14),
-      ),
-      const SizedBox(height: 16),
-      
-      const Text(
-        "Current Filter Status",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Location",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        widget.buildingName,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.fountainDescription,
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                      const SizedBox(height: 16),
+
+                      const Text(
+                        "Current Filter Status",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
                       Text(
                         widget.filterStatus,
                         style: TextStyle(
@@ -231,57 +230,82 @@ Container(
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
-                      const Text(
-                        "Change Filter Status",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      const SizedBox(height: 8),
-                      
-                      Row(
-                        children: [
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: selectedFilterColor,
-                              decoration: const InputDecoration(
-                                labelText: "Filter Status Colors",
-                                border: OutlineInputBorder(),
+
+                      // Conditionally show voting section only if filter is not "none"
+                      if (widget.filterStatus.toLowerCase() != "none") ...[
+                        const Text(
+                          "Change Filter Status",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: selectedFilterColor,
+                                decoration: const InputDecoration(
+                                  labelText: "Filter Status Colors",
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: const [
+                                  DropdownMenuItem(value: "Red", child: Text("Red")),
+                                  DropdownMenuItem(value: "Yellow", child: Text("Yellow")),
+                                  DropdownMenuItem(value: "Green", child: Text("Green")),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedFilterColor = value;
+                                  });
+                                },
                               ),
-                              items: const [
-                                DropdownMenuItem(value: "Red", child: Text("Red")),
-                                DropdownMenuItem(value: "Yellow", child: Text("Yellow")),
-                                DropdownMenuItem(value: "Green", child: Text("Green")),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedFilterColor = value;
-                                });
-                              },
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
-                            onPressed: isSubmitting ? null : submitVote,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.cyan,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                            ),
-                            child: isSubmitting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: isSubmitting ? null : submitVote,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.cyan,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              ),
+                              child: isSubmitting
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "Submit",
+                                      style: TextStyle(color: Colors.white),
                                     ),
-                                  )
-                                : const Text(
-                                    "Submit",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                            ),
+                          ],
+                        ),
+                      ] else ...[
+                        // Show this message when filter is "none"
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
                           ),
-                        ],
-                      ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.info_outline, color: Colors.grey.shade600),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  "This fountain has no filter installed. Voting is not available.",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -301,6 +325,8 @@ Container(
         return Colors.yellow.shade700;
       case 'green':
         return Colors.green;
+      case 'none':
+        return Colors.grey;
       default:
         return Colors.grey;
     }
