@@ -407,6 +407,7 @@ Expanded(
     if (color == Colors.red) return "Red";
     if (color == Colors.yellow) return "Yellow";
     if (color == Colors.green) return "Green";
+    if (color == Colors.grey) return "None";
     return "Unknown";
   }
 
