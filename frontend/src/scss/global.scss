@@ -1,9 +1,27 @@
 // Imports all of bootstrap's CSS 
 @import "bootstrap/scss/bootstrap";
 
+// @import "bootstrap/scss/functions";
+// @import "bootstrap/scss/variables";
+// @import "bootstrap/scss/maps";
+// @import "bootstrap/scss/mixins";
+// @import "bootstrap/scss/utilities";
+// @import "bootstrap/scss/root";
+// @import "bootstrap/scss/forms";
+// @import "bootstrap/scss/reboot";
+// @import "bootstrap/scss/buttons";
+// @import "bootstrap/scss/transitions";
+// @import "bootstrap/scss/nav";
+// @import "bootstrap/scss/navbar";
+// @import "bootstrap/scss/card";
+// @import "bootstrap/scss/close";
+// @import "bootstrap/scss/toasts";
+// @import "bootstrap/scss/tooltip";
+// @import "bootstrap/scss/utilities/api";
+
 @font-face {
     font-family: 'Inter';
-    src: url('../assets/fonts/Inter/Inter-VariableFont_opsz,wght.ttf') format('truetype-variations');
+    src: url('../assets/fonts/Inter/Inter-VariableFont_opsz\,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -15,7 +33,7 @@
 
 @font-face {
     font-family: 'Baloo 2';
-    src: url('../assets/fonts/Baloo_2/Baloo2-VariableFont_wght.ttf') format('truetype-variations');
+    src: url('../assets/fonts/Baloo_2/Baloo2-VariableFont_wght.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -114,8 +132,8 @@ $wheres-my-blue: #13C5E2;
     }
 }
 
-$button-color: #00B3CD;
-$button-color-hover: #018fa4;
+$button-color: #0dbad8;
+$button-color-hover: #017f93;
 $success: $teal-400;
 $success-dark: $teal-800;
 $failure: $orange-300;
@@ -148,34 +166,7 @@ $failure-dark: $orange-600;
 }
 
 
-// .toast-container {
-//     .toast-header.failure {
-//         background-color: $failure-dark;
-//         color: white; 
-//     }
-//     .toast-header.success {
-//         background-color: $success-dark;
-//         color:white;
-//     }
-    
-//     .toast-header {
-//         border-radius: 0.375rem 0.375rem 0 0;
-//     }
-//     .toast-body { 
-//         border-radius: 0 0 0.375rem 0.375rem;    
-//     }
-
-//     .toast-body.failure {
-//         background-color: rgba($failure, 0.5);
-//         color: white;
-//         backdrop-filter: blur(3px);
-//         -webkit-backdrop-filter: blur(3px);
-//     }
-//     .toast-body.success {
-//         background-color: rgba($success, 0.5);
-//         color: white;
-//         backdrop-filter: blur(3px);
-//         -webkit-backdrop-filter: blur(3px);
-//     }
-// }
+.link-light {
+    color: white;
+}
 

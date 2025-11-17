@@ -19,7 +19,7 @@ export const WheresMyWaterTitle: React.FC<WheresMyWaterTitleProps> = ({
         :
         <div>
             <Link to="https://github.com/joosnlaurence/POOS-Large-Project">
-                <img src={waterText} id="water" alt="Water text logo" />
+                <img src={waterText} id="water" alt="Water text logo" fetchPriority="high"/>
             </Link>
         </div>
   
