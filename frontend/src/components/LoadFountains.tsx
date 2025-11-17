@@ -22,7 +22,8 @@ async function LoadFountains(fountainIds: string[]): Promise<Fountain[]> {
                 console.error(res.err);
             } else {
                 const f = res.fountain;
-                const cleanedFountain: Fountain = {
+
+                fountains.push({
                     id: f._id,
                     fountainLocation: [
                         f.location.coordinates.latitude,
@@ -30,16 +31,27 @@ async function LoadFountains(fountainIds: string[]): Promise<Fountain[]> {
                     ],
                     fountainDescription: f.location.description,
                     filterStatus: f.filter,
-                    name: f.location.building + " " + (f.floor == 1 ? "1st" : f.floor == 2 ? "2nd" : f.floor == 3 ? "3rd" : f.floor + "th") + " Floor " + " Fountain " + (i + 1),
+                    name: "",
                     floor: f.floor,
                     imageUrl: f.imgUrl
-                };
-                fountains.push(cleanedFountain);
+                });
             }
         } catch (error: any) {
             console.error(error);
         }
     }
+
+    fountains.sort((a, b) => a.floor - b.floor);
+
+    fountains.forEach((f, index) => {
+        const suffix =
+            f.floor === 1 ? "1st" :
+            f.floor === 2 ? "2nd" :
+            f.floor === 3 ? "3rd" :
+            f.floor + "th";
+
+        f.name = `${suffix} Floor Fountain ${index + 1}`;
+    });
 
     return fountains;
 }
