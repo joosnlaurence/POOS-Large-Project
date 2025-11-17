@@ -22,10 +22,15 @@ function Navbar() {
 
   return (
     <BSNavbar className="water-navbar p-0">
-        <BSNavbar.Brand as={Link} to="/home" className="ms-5">
-          <WheresMyWaterTitle className="white-glow" isInNavbar={true} />
-        </BSNavbar.Brand>
-
+        <OverlayTrigger
+            placement='bottom'
+            delay={{ show: 100, hide: 100 }}
+            overlay={<Tooltip id="home-page-tooltip">Home</Tooltip>}
+        >
+            <BSNavbar.Brand as={Link} to="/home" className="ms-5">
+                <WheresMyWaterTitle className="white-glow" isInNavbar={true} />
+            </BSNavbar.Brand>
+        </OverlayTrigger>
         <Nav className="ms-auto d-flex align-items-center gap-3 me-5">
           <OverlayTrigger
             placement="bottom"

@@ -18,6 +18,7 @@
     border-radius: 16px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     color: black;
+    border: 2px solid black;
 
     position: relative;
 
@@ -78,22 +79,22 @@
 .fountain-button {
     display: block;
     width: 100%;
-    background-color: #00BCD4;   /* same as submit button */
-    color: white;                /* text color */
-    border: 1px solid #0097A7;  /* slightly darker border like submit button */
-    border-radius: 8px;          /* match submit button */
+    background-color: #FEF7FF;   /* same as submit button */
+    color: black;                /* text color */
+    border: 1px solid #ffffff;  /* slightly darker border like submit button */
+    // border-radius: 8px;          /* match submit button */
+    border-bottom: 1px solid black;
     padding: 8px 16px;           /* match submit button padding */
     font-size: 16px;             /* same as submit button */
     font-weight: 500;            /* same as submit button */
     text-align: left;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
-    margin-bottom: 5px;
 }
 
 /* Hover effect */
 .fountain-button:hover {
-    background-color: #00ACC1;   /* same hover as submit button */
+    background-color: #97dfe9;   /* same hover as submit button */
 }
 
 /* Click / active effect */
