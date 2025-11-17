@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import { MainCard } from "../components/MainCard";
 import Navbar from "../components/Navbar";
 import { PageTransition } from "../components/PageTransition";
@@ -6,6 +6,7 @@ import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
 import { SubmitButton } from "../components/SubmitButton";
 import { sendResetLink } from "../utils/passwordResetUtils";
 import { useNavigate } from "react-router-dom";
+import * as URL from '../url';
 
 function AccountPage()
 {
@@ -13,8 +14,10 @@ function AccountPage()
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
+    const [isVerified, setIsVerified] = useState(false);
+    const [verificationMsg, setVerificationMsg] = useState('');
     const [loading, setLoading] = useState(false);
-    const [msg, setMsg] = useState("Sending...");
+    const [changePasswordMsg, setChangePasswordMsg] = useState("Sending...");
     const [linkSent, setLinkSent] = useState(false);
     const navigate = useNavigate();
 
@@ -41,14 +44,62 @@ function AccountPage()
     async function handleSend()
     {
         setLinkSent(false);
-        setMsg("");
+        setChangePasswordMsg("");
 
         setLoading(true);
         const res = await sendResetLink(email);
-        setMsg(res.msg);
+        setChangePasswordMsg(res.msg);
         setLoading(false);
         setLinkSent(true);
     }
+
+    const StatusText: React.FC<{success: boolean, msg: string}> = ({success, msg}) => {
+        return (
+            <div className="d-flex gap-2 justify-content-center">
+                <i className={`bi ${ success
+                    ? `bi-patch-check-fill success-text` 
+                    : `bi-x-circle-fill failure-text`}`}
+                ></i>
+                <span className={`fw-medium ${success ? "success-text" : "failure-text"}`}>
+                    {msg}
+                </span>
+            </div>
+        );
+    };
+
+    useEffect(() => {
+        if(email) {
+            checkVerification();
+        }
+    }, [email]);
+
+    async function checkVerification() {
+        const response = await fetch(URL.buildPath("api/users/check-verification"), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        const res = await response.json();
+
+        if(!res.success) {
+            setIsVerified(false);
+            setVerificationMsg("Could not check if email is verified...");
+            return;
+        }
+
+        if(res.isVerified){
+            setIsVerified(true);
+            setVerificationMsg("Email verified!");
+            return;
+        }
+        else {
+            setIsVerified(false);
+            setVerificationMsg('Email not verified...')
+            return;
+        }
+    }
+
 
     return (
         <div className="d-flex flex-column vh-100">
@@ -58,27 +109,39 @@ function AccountPage()
                     <WheresMyWaterTitle className="mb-4" />    
 
                     <h1 className="mb-2 text-light">
-                        Your Account Info
+                        My Account
                     </h1>
 
-                    <div className="text-start">
-                        <h3 className="mb-2 text-light">Username: {username}</h3>
-                        <h3 className="mb-2 text-light">First Name: {firstName}</h3>
-                        <h3 className="mb-2 text-light">Last Name: {lastName}</h3>
-                        <h3 className="mb-2 text-light">Email: {email}</h3>
+                    <div className="mb-3 mt-3 fs-5 w-75">
+                        <p className="mb-2 text-light d-flex justify-content-between">
+                            <strong>First Name: </strong>{firstName}
+                        </p>
+                        <p className="mb-2 text-light d-flex justify-content-between">
+                            <strong>Last Name: </strong>{lastName}
+                        </p>
+                        <p className="mb-2 text-light d-flex justify-content-between">
+                            <strong>Username: </strong>{username}
+                        </p>
+                        <p className="mb-2 text-light d-flex justify-content-between">
+                            <strong>Email: </strong>{email}
+                        </p>
+                        <StatusText 
+                            success={isVerified}
+                            msg={verificationMsg}
+                        />
                     </div>
                     <SubmitButton
                         onClick={handleSend}
                         isDisabled={loading}
                         defaultMsg="Change Password"
-                        disabledMsg={msg}
+                        disabledMsg={changePasswordMsg}
                         className="mb-4"
                     />
                     {linkSent && (
                         <div>
                             <i className={`bi p-2 bi-check-circle-fill success-text`}></i>
-                            <span className="mb-2 text-light">
-                                {msg}
+                            <span className="mb-2 success-text">
+                                {changePasswordMsg}
                             </span>
                         </div>
                     )}

@@ -21,7 +21,7 @@ function Navbar() {
   } 
 
   return (
-    <BSNavbar className="water-navbar" expand="lg">
+    <BSNavbar className="water-navbar p-0">
         <BSNavbar.Brand as={Link} to="/home" className="ms-5">
           <WheresMyWaterTitle className="white-glow" isInNavbar={true} />
         </BSNavbar.Brand>
@@ -32,12 +32,15 @@ function Navbar() {
             delay={{ show: 100, hide: 100 }}
             overlay={<Tooltip id="alligator-tooltip">Go to Account</Tooltip>}
           >
-            <Nav.Link as={Link} to="/account">
+            <Nav.Link as={Link} to="/account" className='d-flex flex-column justify-content-center align-items-center'>
                 <img 
                 src={Logo}
                 alt="Alligator character"
                 className="alligator-image"
                 />
+                <label className="flex-grow-0 text-center text-light text-decoration-underline fs-6">
+                    My Account
+                </label>
             </Nav.Link>
           </OverlayTrigger>
           
