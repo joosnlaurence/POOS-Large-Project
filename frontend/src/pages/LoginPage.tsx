@@ -1,25 +1,44 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../scss/Login.scss";
 import * as URL from '../url.ts';
-import WheresMyWaterTitle from "../components/WheresMyWaterTitle";
 import { PageTransition } from "../components/PageTransition.tsx";
+import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
+import { FormInput } from "../components/FormInput.tsx";
+import { SubmitButton } from "../components/SubmitButton.tsx";
+import { MainCard } from "../components/MainCard.tsx";
 
 function Login()
 {
     const [message,setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const [loginName,setLoginName] = React.useState('');
     const [loginPassword,setPassword] = React.useState('');
+    const [valid, setValid] = useState(true);
     const navigate = useNavigate();
 
+    const StatusText: React.FC<{success: boolean, msg: string}> = ({success, msg}) => {
+      return (
+          <div className="d-flex gap-2 justify-content-center mb-2">
+              <i className={`bi ${ success
+                  ? `bi-patch-check-fill success-text` 
+                  : `bi-exclamation-diamond-fill failure-text`}`}
+              ></i>
+              <span className={`fw-medium ${success ? "success-text" : "failure-text"}`}>
+                  {msg}
+              </span>
+          </div>
+      );
+  };
 
-    async function doLogin(event:any) : Promise<void>
+
+    async function doLogin() : Promise<void>
     {
-        event.preventDefault();
 
         var obj = {ident:loginName,password:loginPassword};
         var js = JSON.stringify(obj);
-  
+        
+        setLoading(true);
         try
         {    
             const response = await fetch(URL.buildPath('api/users/login'), {
@@ -34,9 +53,11 @@ function Login()
             if( !res.success )
             {
                 setMessage('User/Password combination incorrect');
+                setValid(false);
             }
             else
             {
+                setValid(true);
                 var user = {
                     id: res._id,
                     username: res.user,
@@ -57,27 +78,15 @@ function Login()
             alert(error.toString());
             return;
         }    
+        setLoading(false);
     };
-
-    function handleSetLoginName( e: any ) : void
-    {
-      setLoginName( e.target.value );
-    }
-
-    function handleSetPassword( e: any ) : void
-    {
-      setPassword( e.target.value );
-    }
 
   return (
     <PageTransition>
-        <div className="loginBody">
-        <div className="loginContainer">
+        <MainCard className="vh-100"> 
             <WheresMyWaterTitle className="mb-4" />
 
-            <form onSubmit={doLogin}>
-            <div className="loginGroup">
-                <label htmlFor="loginName" className="pirata-one">Username or Email Address</label>
+            {/* <div className="loginGroup">
                 <input
                 type="text"
                 id="loginName"
@@ -89,7 +98,6 @@ function Login()
             </div>
 
             <div className="loginGroup">
-                <label htmlFor="loginPassword" className="pirata-one">Password</label>
                 <input
                 type="password"
                 id="loginPassword"
@@ -98,44 +106,66 @@ function Login()
                 onChange={handleSetPassword}
                 onKeyDown={(e) => e.key === "Enter" && doLogin}
                 />
-            </div>
+            </div> */}
+
+            <FormInput
+                label='Username'
+                placeholder='Bob'
+                inputValue={loginName}
+                onChange={(e) => setLoginName(e.target.value)}
+                onSubmit={doLogin}
+                isSuccess={valid}
+                formClassName="mb-4"
+            />
+
+            <FormInput
+                type ="password"
+                label='Password'
+                placeholder='Bob'
+                inputValue={loginPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                onSubmit={doLogin}
+                isSuccess={valid}
+                formClassName="mb-4"
+            />
 
             {message && (
-                <div className="errorContainer invalidLoginError pirata-one">
-                {message}
-                </div>
+                <StatusText
+                success={valid}
+                msg={message}
+                />
             )}
 
-            <button
-                type="submit"
-                id="loginButton"
-                className="buttons pirata-one"
-            >
-                Login
-            </button>
-            </form>
 
-            <div className="createAccountLink pirata-one">
-                <span>New to Where's My Water?</span>
-                <span
-                    id="createAccountPrompt"
-                    onClick={() => (navigate("/register"))}
+
+            <SubmitButton 
+                    onClick={doLogin}
+                    isDisabled={loading}
+                    defaultMsg="Login"
+                    disabledMsg="Logging in..."
+                    className="mb-4"
+            />
+
+            <div className="link-light">
+                New to Where's My Water?{" "}
+                <Link 
+                    to="/register" 
+                    className="link-light link-underline-opacity-100 link"
                 >
                     Register here →
-                </span>
+                </Link>
             </div>
 
-            <div className="forgotPasswordLink pirata-one">
-                    <span>Forgot your password?</span>
-                    <span
-                        id="forgotPasswordPrompt"
-                        onClick={() => (navigate("/reset-password"))}
-                    >
-                {" "}Reset it here →
-                </span>
+            <div className="link-light">
+                Forgot Password?{" "}
+                <Link 
+                    to="/register" 
+                    className="link-light link-underline-opacity-100 link"
+                >
+                    Reset it here →
+                </Link>
             </div>
-        </div>
-        </div>
+        </MainCard>
     </PageTransition>
   );
 }
