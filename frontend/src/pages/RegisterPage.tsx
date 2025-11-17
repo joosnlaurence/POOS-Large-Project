@@ -232,7 +232,6 @@ export default function RegisterPage()
 
                 {msg && (
                     <div className="mb-2">
-                    
                         <i className={`bi p-2 ${ registerSuccess
                             ? `bi-check-circle-fill success-text` 
                             : `bi-exclamation-diamond-fill failure-text`}`}

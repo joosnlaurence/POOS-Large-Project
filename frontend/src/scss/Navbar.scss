@@ -18,11 +18,23 @@
 }
 
 .alligator-image {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   object-fit: contain;
   transition: transform 0.3s;
   transition: ease 0.3s;
+}
+
+.nav-link {
+    label {
+        transition: 0.3s ease;
+        cursor: pointer;
+    }
+
+    &:hover {
+        @include glow(white, 10px, 'text');
+        cursor: pointer;
+    }
 }
 
 .alligator-image:hover {
