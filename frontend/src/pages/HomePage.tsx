@@ -128,6 +128,7 @@ function HomePage() {
                         attribution='&copy; OpenStreetMap contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         maxZoom={19}
+                        minZoom={16}
                     />
 
                     <AutoLocationMarker />
