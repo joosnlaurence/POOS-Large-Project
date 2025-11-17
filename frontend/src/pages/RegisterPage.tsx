@@ -113,7 +113,7 @@ export default function RegisterPage()
             let response = await fetch(URL.buildPath('api/users/register'),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
-            let res = JSON.parse(await response.text());
+            let res = await response.json();
   
             if( !res.success )
             {
@@ -135,9 +135,7 @@ export default function RegisterPage()
                     headers: {'Content-Type': 'application/json'}
                 });
 
-                res = JSON.parse(await loginResponse.text());
-
-                console.log(res.body);
+                res = await loginResponse.json();
 
                 const user = {
                     id: res._id,
@@ -150,9 +148,8 @@ export default function RegisterPage()
                 };
                 localStorage.setItem('user_data', JSON.stringify(user));
   
-                setMsg("User successfully created! Logging you in...");
                 setRegisterSuccess(true);
-                setTimeout(() => navigate('/home'), 2000);
+                navigate('/home');
             }
         }
         catch(error:any)

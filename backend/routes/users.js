@@ -67,7 +67,7 @@ export function createUsersRouter(db) {
             });
 
             if(!account || !(await bcrypt.compare(password, account.password))){
-                ret.error = 'Invalid username/password';
+                ret.error = 'Login/Password combination incorrect';
                 res.status(401).json(ret);
                 return;
             }
