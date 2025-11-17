@@ -7,6 +7,8 @@ import WheresMyWaterTitle from "../components/WheresMyWaterTitle.tsx";
 import { FormInput } from "../components/FormInput.tsx";
 import { SubmitButton } from "../components/SubmitButton.tsx";
 import { MainCard } from "../components/MainCard.tsx";
+import Ducky_3D from "../assets/Ducky_3D.webp"
+import squeek from "../assets/squeek.mp3"
 
 function Login()
 {
@@ -16,6 +18,10 @@ function Login()
     const [loginPassword,setPassword] = React.useState('');
     const [valid, setValid] = useState(true);
     const navigate = useNavigate();
+    const playSound = () => {
+        const audio = new Audio(squeek);
+        audio.play();
+    };
 
     const StatusText: React.FC<{success: boolean, msg: string}> = ({success, msg}) => {
       return (
@@ -146,24 +152,34 @@ function Login()
                     className="mb-4"
             />
 
-            <div className="link-light">
-                New to Where's My Water?{" "}
-                <Link 
-                    to="/register" 
-                    className="link-light link-underline-opacity-100 link"
-                >
-                    Register here →
-                </Link>
-            </div>
+            <div className="login-bottom-container">
+                {/* Text block stacked vertically */}
+                <div className="text-links">
+                    <div className="link-light text-center">
+                    New to Where's My Water?{" "}
+                    <Link 
+                        to="/register" 
+                        className="link-light link-underline-opacity-100 link"
+                    >
+                        Register here →
+                    </Link>
+                    </div>
 
-            <div className="link-light">
-                Forgot Password?{" "}
-                <Link 
-                    to="/register" 
-                    className="link-light link-underline-opacity-100 link"
-                >
-                    Reset it here →
-                </Link>
+                    <div className="link-light text-center">
+                    Forgot Password?{" "}
+                    <Link 
+                        to="/register" 
+                        className="link-light link-underline-opacity-100 link"
+                    >
+                        Reset it here →
+                    </Link>
+                    </div>
+                </div>
+
+                {/* Duck next to the text */}
+                <button onClick={playSound} className="ducky-button">
+                    <img src={Ducky_3D} alt="Ducky" className="ducky-img" />
+                </button>
             </div>
         </MainCard>
     </PageTransition>
